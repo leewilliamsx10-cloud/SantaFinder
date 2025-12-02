@@ -238,9 +238,14 @@ async function findNearestStops() {
 
   const results = document.getElementById("results");
 
+ const mapImageFileName = `${encodeURIComponent(areaName)}.jpg`;
+  
+  // 💥 NEW: Link to AreaMapViewer.html, passing the file path (map) and area name (area)
+  const viewerUrl = `AreaMapViewer.html?map=${mapImageFileName}&area=${encodeURIComponent(areaName)}`;
+
   results.innerHTML = `
     <h2>Area: 
-        <a target="_weblink" href="${mapImageUrl}" title="Click to view full area map">
+        <a target="_weblink" href="${viewerUrl}" title="Click to view full area map">
             ${areaName}
         </a>
     </h2>
@@ -254,11 +259,11 @@ async function findNearestStops() {
       `).join('')}
     </ol>
   `;
-}
 </script>
 </body>
 
 </html>
+
 
 
 
