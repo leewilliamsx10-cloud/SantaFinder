@@ -100,7 +100,7 @@ function createSnowflake() {
 setInterval(createSnowflake, 200);
 
 /* =======================================================
-   SAFE KMZ/KML LOADER (V4.3.1) - ASYNCHRONOUS FIX
+   SAFE KMZ/KML LOADER (V4.3.1) - FINAL FIX
 ======================================================= */
 let areaData = null; 
 
@@ -108,11 +108,12 @@ async function loadKMZ() {
   if (areaData) return; 
 
   try {
-    // NOTE: This fetch requires the HTML and KMZ files to be served via HTTP/HTTPS.
-    const kmzUrl = "https://github.com/leewilliamsx10-cloud/SantaFinder/blob/main/SantaZones.kmz"; 
+    // FIX: Use the raw content URL for CORS compliance
+    const kmzUrl = "https://raw.githubusercontent.com/leewilliamsx10-cloud/SantaFinder/main/SantaZones.kmz";
     const response = await fetch(kmzUrl);
+
     if (!response.ok) {
-      console.warn("KMZ file could not be fetched (Check path/CORS). Area detection disabled.");
+      console.warn("KMZ file could not be fetched (Check URL/path). Area detection disabled.");
       areaData = null;
       return;
     }
@@ -133,11 +134,12 @@ async function loadKMZ() {
     const kmlText = await zip.files[kmlPath].async("text");
     const dom = new DOMParser().parseFromString(kmlText, "text/xml");
 
+    // This is the line that converts KML to GeoJSON
     areaData = toGeoJSON.kml(dom); 
-    console.log("Area polygons successfully loaded:", areaData);
+    console.log("Area polygons successfully loaded:", areaData); 
 
   } catch (error) {
-    console.error("KMZ loading error. You must run this script from a web server (e.g., http://localhost) due to browser security restrictions:", error); 
+    console.error("KMZ loading error. The KML structure may be invalid:", error); 
     areaData = null;
   }
 }
@@ -249,3 +251,4 @@ async function findNearestStops() {
 </body>
 
 </html>
+
