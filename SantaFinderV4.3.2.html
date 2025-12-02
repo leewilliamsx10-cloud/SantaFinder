@@ -200,26 +200,38 @@ const santaStops = [
 ];
 
 /* =======================================================
-   FIND NEAREST + AREA (FINAL VERSION WITH CLICKABLE MAP LINK)
+   FIND NEAREST + AREA (FINAL VERSION WITH VALIDATION)
 ======================================================= */
 async function findNearestStops() {
   const postcode = document.getElementById("postcode").value;
+  
   if (!postcode) return alert("Please enter a postcode.");
 
-  // This ensures the KMZ data is loaded before area detection begins
-  await loadKMZ(); 
-
+  // NEW: Basic UK Postcode Validation (before making network request)
+  // This helps prevent network errors for malformed input.
+  const postcodeRegex = /^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/;
+  
+  if (!postcodeRegex.test(postcode.toUpperCase().trim())) {
+    return alert("Please enter a valid UK postcode format (e.g., DL5 4BB).");
+  }
+  
+  // This is the line that generates the console error if the network request fails:
   const response = await fetch(`https://api.postcodes.io/postcodes/${postcode}`);
   const data = await response.json();
-  if (data.status !== 200) return alert("Postcode not found.");
+  
+  // This alert is user-friendly and doesn't contain the URL:
+  if (data.status !== 200) return alert("Postcode not found."); 
 
+  await loadKMZ(); 
+  
   const userLat = data.result.latitude;
   const userLon = data.result.longitude;
 
   const areaName = findArea(userLat, userLon); 
   
-  // 💥 NEW: Create the dynamic image URL and URI-encode the name
-  const mapImageUrl = `${encodeURIComponent(areaName)}.jpg`;
+  // Create the dynamic image URL and the viewer link
+  const mapImageFileName = `${encodeURIComponent(areaName)}.jpg`;
+  const viewerUrl = `AreaMapViewer.html?map=${mapImageFileName}&area=${encodeURIComponent(areaName)}`;
 
   function distance(lat1, lon1, lat2, lon2) {
     const R = 6371;
@@ -240,7 +252,7 @@ async function findNearestStops() {
 
   results.innerHTML = `
     <h2>Area: 
-        <a target="_weblink" href="${mapImageUrl}" title="Click to view full area map">
+        <a target="_weblink" href="${viewerUrl}" title="Click to view full area map">
             ${areaName}
         </a>
     </h2>
@@ -259,6 +271,7 @@ async function findNearestStops() {
 </body>
 
 </html>
+
 
 
 
