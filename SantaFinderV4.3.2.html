@@ -109,7 +109,7 @@ async function loadKMZ() {
 
   try {
     // NOTE: This fetch requires the HTML and KMZ files to be served via HTTP/HTTPS.
-    const kmzUrl = "https://dl.dropboxusercontent.com/s/abcdefgh/SantaZones.kmz?raw=1"; 
+    const kmzUrl = "https://github.com/leewilliamsx10-cloud/SantaFinder/blob/main/SantaZones.kmz"; 
     const response = await fetch(kmzUrl);
     if (!response.ok) {
       console.warn("KMZ file could not be fetched (Check path/CORS). Area detection disabled.");
@@ -247,4 +247,5 @@ async function findNearestStops() {
 }
 </script>
 </body>
+
 </html>
