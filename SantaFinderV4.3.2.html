@@ -200,7 +200,7 @@ const santaStops = [
 ];
 
 /* =======================================================
-   FIND NEAREST + AREA (FIXED)
+   FIND NEAREST + AREA (FINAL VERSION WITH CLICKABLE MAP LINK)
 ======================================================= */
 async function findNearestStops() {
   const postcode = document.getElementById("postcode").value;
@@ -217,6 +217,9 @@ async function findNearestStops() {
   const userLon = data.result.longitude;
 
   const areaName = findArea(userLat, userLon); 
+  
+  // 💥 NEW: Create the dynamic image URL and URI-encode the name
+  const mapImageUrl = `${encodeURIComponent(areaName)}.jpg`;
 
   function distance(lat1, lon1, lat2, lon2) {
     const R = 6371;
@@ -236,7 +239,11 @@ async function findNearestStops() {
   const results = document.getElementById("results");
 
   results.innerHTML = `
-    <h2>Area: ${areaName}</h2>
+    <h2>Area: 
+        <a target="_weblink" href="${mapImageUrl}" title="Click to view full area map">
+            ${areaName}
+        </a>
+    </h2>
     <h2>Nearest Santa Stops to ${postcode.toUpperCase()}:</h2>
     <ol>
       ${topThree.map(stop => `
@@ -252,5 +259,6 @@ async function findNearestStops() {
 </body>
 
 </html>
+
 
 
