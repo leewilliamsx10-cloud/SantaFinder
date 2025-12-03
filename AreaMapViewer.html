@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Santa Zone Map</title>
+
+<style>
+/* Basic Styles from SantaFinderV4.3.html */
+html, body {
+  height: 100%; margin: 0; padding: 0; overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+body {
+  /* Use the same background image */
+  background: url('https://www.great-aycliffe.gov.uk/wp-content/uploads/2025/11/SantaPic.jpg') no-repeat center center;
+  background-size: cover;
+  color: white; display: flex; justify-content: center; align-items: center; text-align: center;
+}
+@media screen and (max-width: 768px) {
+  body {
+    background: url('https://www.great-aycliffe.gov.uk/wp-content/uploads/2025/11/santamobile.jpg') no-repeat center center;
+    background-size: cover;
+  }
+}
+.viewer-container {
+    background: rgba(0,0,0,0.7); 
+    padding: 20px; 
+    max-width: 90vw; 
+    max-height: 90vh;
+    border-radius: 10px;
+    overflow-y: auto; /* Allows scrolling if the image is too large */
+}
+.viewer-container img {
+    max-width: 100%; 
+    height: auto;
+    display: block;
+}
+h1 {
+    margin-top: 0;
+    color: #fff;
+}
+.footer {
+  position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; padding: 8px 0;
+  font-size: 12px; color: white; background: rgba(0,0,0,0.7); z-index: 1000;
+}
+</style>
+</head>
+<body>
+
+<div class="viewer-container">
+    <h1 id="mapTitle">Area Map</h1>
+    <img id="mapImage" src="" alt="Area Map">
+</div>
+
+<div class="footer">
+  <strong>Your postcode is used only to find nearby Santa stops.</strong>
+</div>
+
+<script>
+    // Get the image URL from the browser's query string
+    const urlParams = new URLSearchParams(window.location.search);
+    const imageUrl = urlParams.get('map');
+    const areaName = urlParams.get('area') || 'Map';
+
+    if (imageUrl) {
+        document.getElementById('mapImage').src = imageUrl;
+        document.getElementById('mapTitle').textContent = areaName + ' Zone Map';
+        document.title = areaName + ' Map';
+    }
+</script>
+
+</body>
+</html>
