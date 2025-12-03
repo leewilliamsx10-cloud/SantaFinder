@@ -58,7 +58,7 @@ a[target="_weblink"]:hover { color: red; }
 <div id="app">
   <h1>Santa Finder</h1>
   <strong>
-    <p>Enter your UK postcode to find your area</p>
+    <p>Enter your UK postcode to find your </p>
     <p>and your 3 nearest Santa stops:</p>
   </strong>
 
@@ -251,7 +251,7 @@ async function findNearestStops() {
   const results = document.getElementById("results");
 
   results.innerHTML = `
-    <h2>Area: 
+    <h2>Route: 
         <a target="_weblink" href="${viewerUrl}" title="Click to view full area map">
             ${areaName}
         </a>
@@ -271,6 +271,7 @@ async function findNearestStops() {
 </body>
 
 </html>
+
 
 
 
