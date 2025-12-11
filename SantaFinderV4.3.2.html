@@ -228,16 +228,6 @@ async function findNearestStops() {
   const userLon = data.result.longitude;
 
   const areaName = findArea(userLat, userLon); 
-
-// NEW: Outside-area feedback block
-if (areaName === "Unknown Area" || areaName === "Area data unavailable") {
-  document.getElementById("results").innerHTML = `
-    <h2>Postcode Found — But it's outside our Santa Route Area.</h2>
-    <p>Unfortunately, <strong>${postcode.toUpperCase()}</strong> is not part of the official Santa Routes.</p>
-    <p>Please check the postcode or try a different one.</p>
-  `;
-  return;
-}
   
   // Create the dynamic image URL and the viewer link
   const mapImageFileName = `${encodeURIComponent(areaName)}.jpg`;
@@ -281,6 +271,7 @@ if (areaName === "Unknown Area" || areaName === "Area data unavailable") {
 </body>
 
 </html>
+
 
 
 
