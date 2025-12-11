@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Santa Finder V4.4 — Parish Boundary + Santa Zones</title>
+
+<script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+<script src="https://unpkg.com/togeojson"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+
+<style>
+html, body {
+  height: 100%; margin: 0; padding: 0; overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+body {
+  background: url('https://www.great-aycliffe.gov.uk/wp-content/uploads/2025/11/SantaPic.jpg') no-repeat center center;
+  background-size: cover;
+  color: white; display: flex; justify-content: center; align-items: center; text-align: center;
+}
+@media screen and (max-width: 768px) {
+  body {
+    background: url('https://www.great-aycliffe.gov.uk/wp-content/uploads/2025/11/santamobile.jpg') no-repeat center center;
+    background-size: cover;
+  }
+}
+#app {
+  background: rgba(0,0,0,0.55); padding: 20px; max-width: 500px; width: 90vw; border-radius: 10px;
+}
+input { padding: 10px; width: 80%; border-radius: 6px; border: none; margin-bottom: 10px; font-size: 16px; }
+button {
+  background: #d00; color: white; padding: 10px 20px; border: none; font-size: 16px;
+  border-radius: 6px; cursor: pointer;
+}
+button:hover { background: #a00; }
+#results { margin-top: 20px; text-align: left; max-height: 40vh; overflow-y: auto; }
+.footer {
+  position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; padding: 8px 0;
+  font-size: 12px; color: white; background: rgba(0,0,0,0.7); z-index: 1000;
+}
+.snowflake {
+  position: fixed; top: -20px; pointer-events: none; z-index: 999;
+  animation-name: fall; animation-timing-function: linear;
+}
+@keyframes fall { to { transform: translateY(100vh); } }
+a[target="_weblink"] { color: yellow; }
+a[target="_weblink"]:hover { color: red; }
+</style>
+</head>
+<body>
+
+<audio id="my-audio">
+  <source src="https://www.great-aycliffe.gov.uk/wp-content/uploads/2025/11/536245__cloud-10__ho-ho-ho-merry-christmas.mp3" type="audio/mpeg">
+</audio>
+
+<div id="app">
+  <h1>Santa Finder</h1>
+  <strong>
+    <p>Enter your UK postcode to find your route</p>
+    <p>and your 3 nearest Santa stops:</p>
+  </strong>
+
+  <input type="text" id="postcode" placeholder="e.g. DL5 4BB">
+  <br>
+  <button id="findNearestStops" onclick="findNearestStops()">Find Santa!</button>
+
+  <div id="results"></div>
+</div>
+
+<div class="footer">
+  <strong>We respect your privacy. Your postcode will only be used to find nearby Santa stops and will not be stored.
+  <br>Distances are straight-line estimates and should be checked before travel.</strong>
+</div>
+
+
+<script>
+/* =======================================================
+   AUDIO
+======================================================= */
+const audio = document.getElementById('my-audio');
+document.getElementById('findNearestStops').addEventListener('click', () => {
+  audio.currentTime = 0;
+  audio.play();
+});
+
+/* =======================================================
+   SNOWFALL
+======================================================= */
+function createSnowflake() {
+  const snowflake = document.createElement("img");
+  snowflake.src = "https://www.great-aycliffe.gov.uk/wp-content/uploads/2025/11/vecteezy_snowflake_1194635.png";
+  snowflake.className = "snowflake";
+  snowflake.style.width = "16px";
+  snowflake.style.left = Math.random() * 100 + "vw";
+  snowflake.style.animationDuration = Math.random() * 5 + 5 + "s";
+  document.body.appendChild(snowflake);
+  setTimeout(() => snowflake.remove(), 10000);
+}
+setInterval(createSnowflake, 200);
+
+
+/* =======================================================
+   KMZ LOADER (Parish + Santa Zones)
+======================================================= */
+let parishBoundary = null;
+let santaZones = null;
+
+async function loadKMZ(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+
+    const blob = await response.blob();
+    const arrayBuffer = await blob.arrayBuffer();
+    const zip = await JSZip.loadAsync(arrayBuffer);
+
+    const kmlPath = Object.keys(zip.files).find(f => f.toLowerCase().endsWith(".kml"));
+    if (!kmlPath) return null;
+
+    const kmlText = await zip.files[kmlPath].async("text");
+    const dom = new DOMParser().parseFromString(kmlText, "text/xml");
+
+    return toGeoJSON.kml(dom);
+  } 
+  catch (e) {
+    console.error("KMZ load error:", e);
+    return null;
+  }
+}
+
+
+/* =======================================================
+   UNIVERSAL POLYGON CHECKER
+======================================================= */
+function getAreaNameFromGeoJSON(geojson, lat, lon) {
+  if (!geojson) return null;
+
+  const point = turf.point([lon, lat]);
+
+  for (const feature of geojson.features) {
+    if (turf.booleanPointInPolygon(point, feature)) {
+      return feature.properties.name || feature.properties.description || "Unnamed";
+    }
+  }
+  return null;
+}
+
+
+/* =======================================================
+   SANTA STOPS (unchanged)
+======================================================= */
+const santaStops = [
+  { name:"Aycliffe Village Greens", lat:54.596645, lon:-1.5620434, time:"15:55 - 16:20" },
+  { name:"Bickford Terrace, Aycliffe Village", lat:54.596957, lon:-1.567714, time:"16:25 - 16:40" },
+  { name:"High Barn Road, School Aycliffe", lat:54.607306, lon:-1.60412, time:"16:45 - 16:55" },
+  { name:"School Aycliffe Community Centre", lat:54.610090, lon:-1.6003588, time:"17:00 - 17-25" },
+  { name:"Town Centre, Bewick Crescent Car Park", lat:54.617871, lon:-1.571858, time:"17:00 - 18:55" },
+
+  { name:"Iron Horse Car Park, Emerson Way", lat:54.614567 , lon:-1.5762886, time:"16:00 - 16:25" },
+  { name:"Neville Community Centre Car Park", lat:54.615796, lon:-1.564548, time:"16:30 - 16:55" },
+  { name:"Moore Lane Eco Centre Car Park", lat:54.617884, lon:-1.5586478, time:"17:00 - 17:25" },
+  { name:"LDS Church Car Park", lat:54.62054, lon:-1.562547, time:"17:30 - 17:55" },
+  { name:"St. Oswalds Park Car Park", lat:54.624636, lon:-1.555843, time:"18:00 - 18:25" },
+
+  { name:"Junction7 Car Park, Silverdale Place", lat:54.619649, lon:-1.5923296, time:"16:00 - 16:25" },
+  { name:"West Park Car Park, Oakfield", lat:54.616894, lon:-1.585612, time:"16:30 - 16:55" },
+  { name:"Simpasture Park", lat:54.617052, lon:-1.5803334, time:"17:00 - 17:25" },
+  { name:"Macmillan Road", lat:54.620083, lon:-1.5753499, time:"17:30 - 17:55" },
+  { name:"Newton Aycliffe Youth Centre", lat:54.622956, lon:-1.5693256, time:"18:00 - 18:55" },
+
+  { name:"Byerley Park School", lat:54.625094, lon:-1.597851, time:"16:00 - 16:25" },
+  { name:"Scout Hut Car Park", lat:54.624421, lon:-1.588105, time:"16:30 - 16:55" },
+  { name:"Turbinia Car Park", lat:54.625817, lon:-1.5823022, time:"17:00 - 17:25" },
+  { name:"Agnew Community Centre Car Park", lat:54.629307, lon:-1.5730056, time:"17:30 - 17:55" },
+  { name:"St. Francis Primary School", lat:54.622528 , lon:-1.5953578, time:"18:00 - 18:25" },
+
+  { name:"PCP Carpark", lat:54.630388, lon:-1.5810362, time:"16:00 - 16:25" },
+  { name:"Cobbler's Hall Road", lat:54.633334, lon:-1.5816651, time:"16:30 - 16:55" },
+  { name:"Woodham Golf Club Car Park", lat:54.639696, lon:-1.5775225, time:"17:00 - 17:25" },
+  { name:"Ryder Court", lat:54.639493, lon:-1.5773226, time:"17:00 - 17:25" },
+  { name:"Woodham Community Centre", lat:54.633420, lon:-1.5668567, time:"17:30 - 17:55" }
+];
+
+
+/* =======================================================
+   MAIN FUNCTION WITH PARISH CHECK + SANTA ZONE DETECTION
+======================================================= */
+async function findNearestStops() {
+  const postcode = document.getElementById("postcode").value;
+
+  if (!postcode) return alert("Please enter a postcode.");
+
+  const postcodeRegex = /^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/;
+  if (!postcodeRegex.test(postcode.toUpperCase().trim())) {
+    return alert("Please enter a valid UK postcode (e.g. DL5 4BB).");
+  }
+
+  const response = await fetch(`https://api.postcodes.io/postcodes/${postcode}`);
+  const data = await response.json();
+  if (data.status !== 200) return alert("Postcode not found.");
+
+  const userLat = data.result.latitude;
+  const userLon = data.result.longitude;
+
+  // Load KMZ files if needed
+  if (!parishBoundary)
+    parishBoundary = await loadKMZ("ParishBoundary.kmz");
+
+  if (!santaZones)
+    santaZones = await loadKMZ("SantaZones.kmz");
+
+  /* 1️⃣ CHECK PARISH BOUNDARY */
+  const parishArea = getAreaNameFromGeoJSON(parishBoundary, userLat, userLon);
+
+  if (!parishArea) {
+    document.getElementById("results").innerHTML = `
+      <h2>Postcode Outside the Parish Boundary</h2>
+      <p>Sorry — <strong>${postcode.toUpperCase()}</strong> is not inside the Great Aycliffe Parish boundary.</p>
+      <p>This service is available only for addresses within the parish.</p>
+    `;
+    return;
+  }
+
+  /* 2️⃣ DETERMINE SANTA ZONE (even if different polygons) */
+  const santaArea = getAreaNameFromGeoJSON(santaZones, userLat, userLon) || "Unknown Area";
+
+  const mapImageFileName = `${encodeURIComponent(santaArea)}.jpg`;
+  const viewerUrl = `AreaMapViewer.html?map=${mapImageFileName}&area=${encodeURIComponent(santaArea)}`;
+
+
+  /* 3️⃣ CALCULATE NEAREST SANTA STOPS */
+  function distance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+  }
+
+  santaStops.forEach(stop => {
+    stop.distance = distance(userLat, userLon, stop.lat, stop.lon);
+  });
+
+  santaStops.sort((a,b) => a.distance - b.distance);
+  const topThree = santaStops.slice(0,3);
+
+
+  /* 4️⃣ OUTPUT RESULTS */
+  document.getElementById("results").innerHTML = `
+    <h2>Your Santa Route Area:</h2>
+    <h3><a target="_weblink" href="${viewerUrl}">${santaArea}</a></h3>
+
+    <h2>Nearest Santa Stops to ${postcode.toUpperCase()}:</h2>
+    <ol>
+      ${topThree.map(stop => `
+        <li><strong>${stop.name}</strong><br>
+        ${stop.distance.toFixed(2)} km away<br>
+        Time: ${stop.time}<br>
+        <a target="_weblink" href="https://maps.google.com/maps?saddr=${userLat},${userLon}&daddr=${stop.lat},${stop.lon}&travelmode=walking">
+          Get walking directions
+        </a></li>
+      `).join('')}
+    </ol>
+  `;
+}
+</script>
+
+</body>
+</html>
