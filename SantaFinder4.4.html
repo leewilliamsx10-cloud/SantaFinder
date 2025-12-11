@@ -223,7 +223,7 @@ async function findNearestStops() {
   }
 
   /* 2️⃣ DETERMINE SANTA ZONE (even if different polygons) */
-  const santaArea = getAreaNameFromGeoJSON(santaZones, userLat, userLon) || "Unknown Area";
+  const santaArea = getAreaNameFromGeoJSON(santaZones, userLat, userLon) || "Entered postcode may be outside of one of the Santa Routes.";
 
   const mapImageFileName = `${encodeURIComponent(santaArea)}.jpg`;
   const viewerUrl = `AreaMapViewer.html?map=${mapImageFileName}&area=${encodeURIComponent(santaArea)}`;
