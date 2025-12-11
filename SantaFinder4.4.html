@@ -210,7 +210,7 @@ async function findNearestStops() {
     document.getElementById("results").innerHTML = `
       <h2>Postcode Outside the Parish Boundary</h2>
       <p>Sorry — <strong>${postcode.toUpperCase()}</strong> is not inside the Great Aycliffe Parish boundary.</p>
-      <p>This service is available only for addresses within the parish.</p>
+      <p>This service is only available for addresses within the parish.</p>
     `;
     return;
   }
