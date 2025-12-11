@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Santa Finder V4.4</title>
+<title>Santa Finder V4.5.1</title>
 
 <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
 <script src="https://unpkg.com/togeojson"></script>
@@ -75,10 +75,6 @@ a[target="_weblink"]:hover { color: red; }
   margin-top: 0;
   color: #c40000;
 }
-#safetyPopup label {
-  display:block;
-  margin-top:10px;
-}
 </style>
 </head>
 <body>
@@ -95,9 +91,6 @@ a[target="_weblink"]:hover { color: red; }
       Please supervise children at all times, avoid stepping into the road,  
       and keep a safe distance from the vehicle.
     </p>
-    <label>
-      <input type="checkbox" id="agreeCheckbox"> I have read and understood the safety information.
-    </label>
     <button onclick="handleAgreement()">Continue</button>
   </div>
 </div>
@@ -135,10 +128,6 @@ window.onload = function() {
 };
 
 function handleAgreement() {
-  if (!document.getElementById('agreeCheckbox').checked) {
-    alert('Please confirm you have read the safety information.');
-    return;
-  }
   document.getElementById('safetyPopup').style.display = 'none';
 }
 
