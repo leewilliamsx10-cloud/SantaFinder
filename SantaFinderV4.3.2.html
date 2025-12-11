@@ -251,9 +251,9 @@ async function findNearestStops() {
   const results = document.getElementById("results");
 
   results.innerHTML = `
-    <h2>Route: 
+    <h2>Your nearest route is:  
         <a target="_weblink" href="${viewerUrl}" title="Click to view full area map">
-            ${areaName}
+            ${areaName} (Click to see the route).
         </a>
     </h2>
     <h2>Nearest Santa Stops to ${postcode.toUpperCase()}:</h2>
@@ -271,6 +271,7 @@ async function findNearestStops() {
 </body>
 
 </html>
+
 
 
 
