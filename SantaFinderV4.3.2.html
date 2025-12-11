@@ -232,8 +232,8 @@ async function findNearestStops() {
 // NEW: Outside-area feedback block
 if (areaName === "Unknown Area" || areaName === "Area data unavailable") {
   document.getElementById("results").innerHTML = `
-    <h2>Postcode Found — But It's Outside Our Santa Route Area</h2>
-    <p>Unfortunately, <strong>${postcode.toUpperCase()}</strong> is not inside any of the official Santa Routes.</p>
+    <h2>Postcode Found — But it's outside our Santa Route Area.</h2>
+    <p>Unfortunately, <strong>${postcode.toUpperCase()}</strong> is not part of the official Santa Routes.</p>
     <p>Please check the postcode or try a different one.</p>
   `;
   return;
@@ -281,6 +281,7 @@ if (areaName === "Unknown Area" || areaName === "Area data unavailable") {
 </body>
 
 </html>
+
 
 
 
