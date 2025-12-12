@@ -286,11 +286,11 @@ if (!santaArea) {
   const viewerUrl = `AreaMapViewer.html?map=${townMapFileName}&area=${encodeURIComponent('Town Area (Outside Santa Route)')}`;
   
   document.getElementById("results").innerHTML = `
-    <h2>View Town Map</h2>
-    <p>Your address is within the Parish Boundary but appears to be outside of the designated Santa Route areas.</p>
-    <p>Click below to view the general town map:</p>
-    <p><a href="${viewerUrl}" target="_blank" class="map-link">View Town Map (${postcode.toUpperCase()})</a></p>
-    <p>If you believe this is an error, please contact the Parish Council.</p>
+    
+    <p>Your postcode is within the Parish Boundary but appears to be outside of the designated Santa Route areas.</p>
+    
+    <p><a href="${viewerUrl}" target="_blank" class="map-link">View all Santa Routes (${postcode.toUpperCase()})</a></p>
+    
   `;
   return;
 }
