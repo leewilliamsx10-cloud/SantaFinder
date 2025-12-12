@@ -293,7 +293,7 @@ async function findNearestStops() {
         <li><strong>${stop.name}</strong><br>
         ${stop.distance.toFixed(2)} km away<br>
         Time: ${stop.time}<br>
-        <a target="_weblink" href="https://maps.google.com/maps?saddr=${userLat},${userLon}&daddr=${stop.lat},${stop.lon}&travelmode=walking">
+        <a target="_weblink" href="https://maps.google.com/maps?saddr=${userLat},${userLon}&daddr=${stop.lat},${stop.lon}&dirflg=w">
           Get walking directions
         </a></li>
       `).join('')}
