@@ -251,40 +251,66 @@ async function findNearestStops() {
   const userLat = data.result.latitude;
   const userLon = data.result.longitude;
 
-  if (!parishBoundary)
-    parishBoundary = await loadKMZ("ParishBoundary.kmz");
+  // Assuming userLat and userLon have been derived from the postcode
+// and the postcode variable holds the user's input.
 
-  if (!santaZones)
-    santaZones = await loadKMZ("SantaZones.kmz");
+if (!parishBoundary)
+  parishBoundary = await loadKMZ("ParishBoundary.kmz");
 
-  const parishArea = getAreaNameFromGeoJSON(parishBoundary, userLat, userLon);
+if (!santaZones)
+  santaZones = await loadKMZ("SantaZones.kmz");
 
- if (!parishArea) {
-    document.getElementById("results").innerHTML = `
-      <h2>Postcode Outside the Parish Boundary</h2>
-      <p>Sorry — <strong>${postcode.toUpperCase()}</strong> is not inside the Great Aycliffe Parish boundary.</p>
-      <p>This service is only available for addresses within the parish.</p>
-    `;
-    return; // <-- Script stops here if outside parish
+const parishArea = getAreaNameFromGeoJSON(parishBoundary, userLat, userLon);
+
+if (!parishArea) {
+  // 1. Postcode is OUTSIDE Parish Boundary - (Original Logic)
+  document.getElementById("results").innerHTML = `
+    <h2>Postcode Outside the Parish Boundary</h2>
+    <p>Sorry — <strong>${postcode.toUpperCase()}</strong> is not inside the Great Aycliffe Parish boundary.</p>
+    <p>This service is only available for addresses within the parish.</p>
+  `;
+  return;
 }
 
-// -----------------------------------------------------
-// *** THIS CODE ONLY RUNS IF parishArea IS TRUE ***
-// -----------------------------------------------------
+// 2. Postcode is INSIDE Parish Boundary - (New Check Begins Here)
+// Check if the postcode is inside a Santa Zone
+const santaArea = getAreaNameFromGeoJSON(santaZones, userLat, userLon);
 
-const santaArea = getAreaNameFromGeoJSON(santaZones, userLat, userLon) || "Entered postcode may be outside of one of the Santa Routes.";
+// --- START OF AMENDMENT ---
 
+if (!santaArea) {
+  // Condition Met: INSIDE Parish AND NOT inside Santa Zone
+  
+  // Set the specific image/map link for this condition
+  const townMapFileName = "TownMap.jpg";
+  const viewerUrl = `AreaMapViewer.html?map=${townMapFileName}&area=${encodeURIComponent('Town Area (Outside Santa Route)')}`;
+  
+  document.getElementById("results").innerHTML = `
+    <h2>View Town Map</h2>
+    <p>Your address is within the Parish Boundary but appears to be outside of the designated Santa Route areas.</p>
+    <p>Click below to view the general town map:</p>
+    <p><a href="${viewerUrl}" target="_blank" class="map-link">View Town Map (${postcode.toUpperCase()})</a></p>
+    <p>If you believe this is an error, please contact the Parish Council.</p>
+  `;
+  return;
+}
+
+// --- END OF AMENDMENT ---
+
+// 3. Postcode is INSIDE Parish AND INSIDE Santa Zone - (Original Logic Continues)
+
+// If we reach this point, santaArea is NOT null, so the postcode is inside a Santa Zone.
+// We use the area name derived from the KMZ file for the map link.
 const mapImageFileName = `${encodeURIComponent(santaArea)}.jpg`;
 const viewerUrl = `AreaMapViewer.html?map=${mapImageFileName}&area=${encodeURIComponent(santaArea)}`;
 
-// --- Place the final results output here ---
 document.getElementById("results").innerHTML = `
-    <h2>Great News! You are in the Parish.</h2>
-    <p>Your postcode is in the **${santaArea}** route area.</p>
-    <p>
-      <a href="${viewerUrl}" target="_blank">Click here to view the route map for your area.</a>
-    </p>
-    `;
+  <h2>Your Santa Route Map</h2>
+  <p>Your address is inside the **${santaArea}** Santa Route area.</p>
+  <p>Click below to view your specific route map:</p>
+  <p><a href="${viewerUrl}" target="_blank" class="map-link">View Route Map (${postcode.toUpperCase()})</a></p>
+`;
+// No return here, as the script should finish after setting the HTML.
   function distance(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
