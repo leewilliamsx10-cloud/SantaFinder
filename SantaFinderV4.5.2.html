@@ -48,6 +48,40 @@ button:hover { background: #a00; }
   position: fixed; top: -20px; pointer-events: none; z-index: 999;
   animation-name: fall; animation-timing-function: linear;
 }
+
+#visit-counter-container {
+    /* Fixed position keeps it in the same place even when scrolling */
+    position: fixed; 
+    
+    /* Pushes the element to the bottom edge of the viewport */
+    bottom: 20px; 
+    
+    /* Pushes the element to the right edge of the viewport */
+    right: 20px; 
+    
+    /* Basic styling for visibility */
+    background-color: #f0f0f0; /* Light background for contrast */
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    
+    /* Ensures the counter is above most other page content */
+    z-index: 1000; 
+    
+    /* Display the label and image on the same line */
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between the label and the badge */
+}
+
+.counter-label {
+    /* Style the text label */
+    font-family: sans-serif;
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+}
+ 
 @keyframes fall { to { transform: translateY(100vh); } }
 a[target="_weblink"] { color: yellow; }
 a[target="_weblink"]:hover { color: red; }
@@ -125,6 +159,14 @@ a[target="_weblink"]:hover { color: red; }
   <div id="results"></div>
 </div>
 
+<div id="visit-counter-container">
+    <span class="counter-label">Page Visits:</span>
+    <img 
+        src="https://visitor-badge.laobi.icu/badge?page_id=leewilliamsx10-cloud.SantaFinderV4.5.2" 
+        alt="Page Visitor Count"
+    />
+</div> 
+ 
 <div class="footer">
   <strong>© 2025 Great Aycliffe Town Council</strong>
 </div>
