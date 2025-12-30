@@ -14,12 +14,12 @@
     --accent: #c1121f;
   }
 
-  /* --- Themes --- */
-  body.theme-santa { background-image: url("santa.jpg"); --accent: #c1121f; }
-  body.theme-snow { background-image: url("snow.jpg"); --accent: #457b9d; }
-  body.theme-reindeer { background-image: url("reindeer.webp"); --accent: #8b5a2b; }
-  body.theme-gingerbread { background-image: url("ginger.jpg"); --accent: #d4a373; --paper: #faedcd; }
-  body.theme-presents { background-image: url("presents.jpg"); --accent: #c1121f; }
+  /* --- Themes with Color Fallbacks --- */
+  body.theme-santa { background-color: #f1faee; background-image: url("santa.jpg"); --accent: #c1121f; }
+  body.theme-snow { background-color: #caf0f8; background-image: url("snow.jpg"); --accent: #457b9d; }
+  body.theme-reindeer { background-color: #faedcd; background-image: url("reindeer.webp"); --accent: #8b5a2b; }
+  body.theme-gingerbread { background-color: #ffe8d6; background-image: url("ginger.jpg"); --accent: #d4a373; }
+  body.theme-presents { background-color: #ffddd2; background-image: url("presents.jpg"); --accent: #c1121f; }
   
   body {
     font-family: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
@@ -28,8 +28,7 @@
     background-attachment: fixed;
     margin: 0;
     padding: 20px;
-    transition: background-image 0.5s ease;
-    background-color: #f0f0f0;
+    transition: all 0.5s ease;
   }
 
   .container {
@@ -38,13 +37,24 @@
     margin: auto;
     padding: 30px;
     border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     border: 8px solid white;
     position: relative;
   }
 
   .theme-picker { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-  .theme-btn { border: 2px solid #ddd; background: white; padding: 8px 12px; border-radius: 50px; cursor: pointer; font-size: 14px; transition: 0.3s; }
+  
+  .theme-btn { 
+    border: 2px solid #ddd; 
+    background: white; 
+    padding: 8px 15px; 
+    border-radius: 50px; 
+    cursor: pointer; 
+    font-size: 14px; 
+    transition: 0.3s;
+    font-family: inherit;
+  }
+  .theme-btn:hover { transform: scale(1.05); }
   .theme-btn.active { background: var(--gold); border-color: #333; font-weight: bold; }
 
   h1 { text-align: center; color: var(--santa-red); font-size: 28px; margin-top: 0; }
@@ -54,39 +64,9 @@
   label { display: block; margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
   input, textarea, select { width: 100%; padding: 12px; font-size: 16px; margin-top: 5px; border-radius: 10px; border: 2px solid #eee; box-sizing: border-box; }
 
-  /* --- Updated Radio Group Formatting --- */
-  .radio-group { 
-    background: #ffffff; 
-    padding: 15px; 
-    border-radius: 12px; 
-    border: 2px solid #eee; 
-    margin-top: 8px; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 12px; 
-  }
-  .radio-option { 
-    display: flex; 
-    align-items: center; 
-    cursor: pointer; 
-    gap: 12px; 
-    font-weight: normal; 
-    font-size: 16px;
-    padding: 8px;
-    border-radius: 8px;
-    transition: background 0.2s;
-  }
-  .radio-option:hover {
-    background: #f9f9f9;
-  }
-  .radio-option input {
-    width: 20px;
-    height: 20px;
-    margin: 0;
-    cursor: pointer;
-  }
+  .radio-group { background: #ffffff; padding: 15px; border-radius: 12px; border: 2px solid #eee; margin-top: 8px; display: flex; flex-direction: column; gap: 12px; }
+  .radio-option { display: flex; align-items: center; cursor: pointer; gap: 12px; font-weight: normal; font-size: 16px; padding: 5px; }
 
-  /* Hidden on screen, shown on print */
   #print-behavior-text { display: none; font-size: 18px; margin-top: 15px; font-weight: bold; }
   .signature-area { display: none; }
 
@@ -101,26 +81,12 @@
   .address-box { margin-top: 20px; background: var(--paper); padding: 20px; border: 1px solid #d4a373; border-radius: 5px; position: relative; min-height: 80px; }
   .stamp { position: absolute; top: 10px; right: 10px; width: 60px; height: 60px; border: 3px double var(--accent); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; transform: rotate(15deg); border-radius: 5px; text-align: center; }
 
-  /* --- Print Specific Styling --- */
   @media print {
     body { background-image: none !important; background-color: white !important; padding: 0; }
     .theme-picker, button, .btn-add, .btn-remove, .radio-group, .reply-label, #address, .privacy-notice { display: none !important; }
-    
     #print-behavior-text { display: block !important; }
     .signature-area { display: block !important; margin-top: 40px; border-top: 2px solid #333; width: 250px; padding-top: 10px; font-weight: bold; }
-
-    .container { 
-      box-shadow: none !important; 
-      border: 15px double var(--tree-green) !important; 
-      max-width: 100% !important; margin: 0 !important; padding: 40px !important; background: white !important;
-    }
-
-    .container::before {
-      content: "❄️ NORTH POLE OFFICIAL CORRESPONDENCE ❄️";
-      position: absolute; top: 10px; left: 0; right: 0;
-      text-align: center; font-size: 12px; color: var(--tree-green); font-weight: bold;
-    }
-
+    .container { box-shadow: none !important; border: 15px double var(--tree-green) !important; max-width: 100% !important; margin: 0 !important; padding: 40px !important; background: white !important; }
     input, textarea, select { border: none !important; background: transparent !important; font-family: inherit !important; }
   }
 </style>
@@ -195,3 +161,91 @@
 
   <div class="signature-area">
     X Signature of the Sender
+  </div>
+
+  <div class="address-box privacy-notice" style="font-size:13px; margin-top: 10px; border-style: dotted; min-height: auto;">
+    <strong>Privacy & Safety Notice</strong><br>
+    This page does not store personal data.<br>
+    Emails are sent using the device’s email app.<br>
+    Home addresses should only be entered with adult permission.<br>
+    Adult supervision is recommended at all times.
+  </div>
+
+  <button type="button" class="main-btn send-btn" onclick="validateAndProcess('email')">Send email to Santa's helpers 📤</button>
+  <button type="button" class="main-btn print-btn" onclick="validateAndProcess('print')">Print my letter to send to Santa 📮</button>
+</div>
+
+<script>
+  function setTheme(theme, btn) {
+    // Remove all theme classes from body
+    document.body.classList.remove('theme-santa', 'theme-snow', 'theme-reindeer', 'theme-gingerbread', 'theme-presents');
+    // Add the selected theme class
+    document.body.classList.add('theme-' + theme);
+    
+    // Update active button state
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Update Stamp Text
+    const stampLabel = document.getElementById('stampLabel');
+    if(stampLabel) {
+        switch(theme) {
+          case 'snow': stampLabel.innerHTML = "NORTH POLE<br>ICE MAIL"; break;
+          case 'reindeer': stampLabel.innerHTML = "FLYING EXPRESS<br>MAIL"; break;
+          case 'gingerbread': stampLabel.innerHTML = "BAKED AT<br>NORTH POLE"; break;
+          case 'presents': stampLabel.innerHTML = "PARCEL POST<br>NORTH POLE"; break;  
+          default: stampLabel.innerHTML = "SANTA POST<br>NORTH POLE";
+        }
+    }
+  }
+
+  function validateAndProcess(action) {
+    const sound = document.getElementById("santaSound");
+    if (sound) { sound.play(); }
+
+    const name = document.getElementById("name").value.trim();
+    const age = document.getElementById("age").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const message = document.getElementById("message").value.trim();
+
+    if (!name || !age || !address) {
+      alert("🎅 Ho Ho Ho! Santa needs your Name, Age, and Address to find you!");
+      return;
+    }
+
+    if (action === 'print') {
+      const behaviorSelection = document.querySelector('input[name="behaviour"]:checked').value;
+      document.getElementById('status-val').innerText = behaviorSelection;
+      window.print();
+    } else {
+      sendViaEmail(name, age, address, message);
+    }
+  }
+
+  function sendViaEmail(name, age, address, message) {
+    const behavior = document.querySelector('input[name="behaviour"]:checked').value;
+    let wishlist = "";
+    document.querySelectorAll('.toy-name').forEach((toy, i) => {
+      if(toy.value.trim()) {
+        wishlist += `- ${toy.value.trim()} (${document.querySelectorAll('.toy-priority')[i].value})\n`;
+      }
+    });
+    const recipient = "lee.williams@great-aycliffe.gov.uk"; 
+    const subject = `Christmas Letter from ${name}`;
+    const body = `Dear Santa,\n\nMy name is ${name} and I am ${age} years old. \nThis year, I have been ${behavior}!\n\nMy Message:\n${message}\n\nMy Wishlist:\n${wishlist}\n\nPlease reply to:\n${address}\n\nLove, \n${name}`;
+    window.location.href = "mailto:" + recipient + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+  }
+
+  function addRow() {
+    const table = document.getElementById("wishlistTable").getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+    newRow.innerHTML = '<td><input type="text" class="toy-name"></td><td><select class="toy-priority"><option value="Must Have!">Must Have! ⭐</option><option value="Pretty Please">Pretty Please 🙏</option><option value="Maybe?">Maybe? 😊</option></select></td><td><button type="button" class="btn-remove" onclick="this.parentElement.parentElement.remove()">✕</button></td>';
+  }
+
+  document.getElementById("address").addEventListener("input", function() {
+    document.getElementById("printAddressText").innerText = this.value || "Waiting for your address...";
+  });
+</script>
+
+</body>
+</html>
