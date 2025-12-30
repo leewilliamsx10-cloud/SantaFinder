@@ -14,7 +14,7 @@
     --accent: #c1121f;
   }
 
-  /* Themes */
+  /* --- Themes --- */
   body.theme-santa { background-image: url("santa.jpg"); --accent: #c1121f; }
   body.theme-snow { background-image: url("snow.jpg"); --accent: #457b9d; }
   body.theme-reindeer { background-image: url("reindeer.webp"); --accent: #8b5a2b; }
@@ -29,7 +29,7 @@
     margin: 0;
     padding: 20px;
     transition: background-image 0.5s ease;
-    background-color: #f0f0f0; /* Fallback color */
+    background-color: #f0f0f0;
   }
 
   .container {
@@ -40,6 +40,7 @@
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.4);
     border: 8px solid white;
+    position: relative;
   }
 
   .theme-picker { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -60,17 +61,49 @@
   .btn-add { background: var(--gold); padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
   .btn-remove { background: #e63946; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; }
 
-  .main-btn { margin-top: 15px; width: 100%; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 12px; border: none; cursor: pointer; transition: 0.2s; }
-  .send-btn { background: var(--tree-green); color: white; }
-  .print-btn { background: #457b9d; color: white; }
+  .main-btn { margin-top: 15px; width: 100%; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 12px; border: none; cursor: pointer; transition: 0.2s; color: white; }
+  .send-btn { background: var(--tree-green); }
+  .print-btn { background: #457b9d; }
 
   .address-box { margin-top: 20px; background: var(--paper); padding: 20px; border: 1px solid #d4a373; border-radius: 5px; position: relative; min-height: 80px; }
   .stamp { position: absolute; top: 10px; right: 10px; width: 60px; height: 60px; border: 3px double var(--accent); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; transform: rotate(15deg); border-radius: 5px; text-align: center; }
 
+  /* --- Print Specific Styling --- */
   @media print {
-    .theme-picker, button, .btn-add, .btn-remove, .radio-group { display: none !important; }
-    body { background: white !important; padding: 0; }
-    .container { box-shadow: none; border: none; max-width: 100%; }
+    .theme-picker, button, .btn-add, .btn-remove, .radio-group { 
+      display: none !important; 
+    }
+    body { 
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      background-color: white !important;
+      padding: 0;
+    }
+    .container { 
+      box-shadow: none !important; 
+      border: 15px double var(--tree-green) !important; /* Decorative North Pole Border */
+      max-width: 95% !important;
+      margin: 0 auto !important;
+      padding: 40px !important;
+      background: white !important;
+    }
+    .container::before {
+      content: "❄️ NORTH POLE OFFICIAL CORRESPONDENCE ❄️";
+      position: absolute;
+      top: 10px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--tree-green);
+      font-weight: bold;
+    }
+    input, textarea, select {
+      border: none !important;
+      background: transparent !important;
+      padding: 5px 0 !important;
+      font-family: inherit !important;
+    }
   }
 </style>
 </head>
@@ -142,7 +175,7 @@
 </div>
 
 <script>
-  // Helper to change themes
+  // Theme Switching Logic
   function setTheme(theme, btn) {
     document.body.className = 'theme-' + theme;
     document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
@@ -160,34 +193,48 @@
     }
   }
 
-  // Main Validation and Trigger function
+  // Master Validation Function
   function validateAndProcess(action) {
-    const name = document.getElementById("name").value.trim();
-    const age = document.getElementById("age").value.trim();
-    const address = document.getElementById("address").value.trim();
-    const message = document.getElementById("message").value.trim();
+    const nameInput = document.getElementById("name");
+    const ageInput = document.getElementById("age");
+    const addressInput = document.getElementById("address");
+    const messageInput = document.getElementById("message");
 
-    // Reset styles
-    document.getElementById("name").style.borderColor = "#eee";
-    document.getElementById("age").style.borderColor = "#eee";
-    document.getElementById("address").style.borderColor = "#eee";
+    const name = nameInput.value.trim();
+    const age = ageInput.value.trim();
+    const address = addressInput.value.trim();
+    const message = messageInput.value.trim();
 
+    // Reset Highlight Colors
+    nameInput.style.borderColor = "#eee";
+    ageInput.style.borderColor = "#eee";
+    addressInput.style.borderColor = "#eee";
+
+    // Validation Check
     if (!name || !age || !address) {
       alert("🎅 Ho Ho Ho! Santa needs your Name, Age, and Address to find you! Please fill those in first.");
-      if (!name) document.getElementById("name").style.borderColor = "red";
-      if (!age) document.getElementById("age").style.borderColor = "red";
-      if (!address) document.getElementById("address").style.borderColor = "red";
+      if (!name) nameInput.style.borderColor = "red";
+      if (!age) ageInput.style.borderColor = "red";
+      if (!address) addressInput.style.borderColor = "red";
       return;
     }
 
     if (action === 'print') {
+      // Clean placeholders for a pretty print
+      const inputs = document.querySelectorAll('input, textarea');
+      const savedPlaceholders = Array.from(inputs).map(i => i.placeholder);
+      inputs.forEach(i => i.placeholder = "");
+
       window.print();
+
+      // Restore placeholders
+      inputs.forEach((i, idx) => i.placeholder = savedPlaceholders[idx]);
     } else {
       sendViaEmail(name, age, address, message);
     }
   }
 
-  // Internal Email function
+  // Email Sleigh Logic
   function sendViaEmail(name, age, address, message) {
     const behavior = document.querySelector('input[name="behaviour"]:checked').value;
     let wishlist = "";
@@ -205,14 +252,14 @@
     window.location.href = mailtoLink;
   }
 
-  // Wishlist Row Adder
+  // Wishlist Row Logic
   function addRow() {
     const table = document.getElementById("wishlistTable").getElementsByTagName('tbody')[0];
     const newRow = table.insertRow();
     newRow.innerHTML = '<td><input type="text" class="toy-name"></td><td><select class="toy-priority"><option value="Must Have!">Must Have! ⭐</option><option value="Pretty Please">Pretty Please 🙏</option><option value="Maybe?">Maybe? 😊</option></select></td><td><button type="button" class="btn-remove" onclick="this.parentElement.parentElement.remove()">✕</button></td>';
   }
 
-  // Address Live Update
+  // Address Sync Logic
   document.getElementById("address").addEventListener("input", function() {
     document.getElementById("printAddressText").innerText = this.value || "Waiting for your address...";
   });
