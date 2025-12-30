@@ -68,7 +68,6 @@
   .address-box { margin-top: 20px; background: var(--paper); padding: 20px; border: 1px solid #d4a373; border-radius: 5px; position: relative; min-height: 80px; }
   .stamp { position: absolute; top: 10px; right: 10px; width: 60px; height: 60px; border: 3px double var(--accent); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; transform: rotate(15deg); border-radius: 5px; text-align: center; }
 
-  /* Hidden on screen, shown only on print */
   .signature-area { display: none; }
 
   /* --- Print Specific Styling --- */
@@ -79,7 +78,8 @@
       padding: 0;
     }
 
-    .theme-picker, button, .btn-add, .btn-remove, .radio-group { 
+    /* Hide theme picker, buttons, and the interactive address input box */
+    .theme-picker, button, .btn-add, .btn-remove, .radio-group, .reply-label, #address { 
       display: none !important; 
     }
 
@@ -145,8 +145,7 @@
   <label>Have you been Naughty or Nice?</label>
   <div class="radio-group">
     <label class="radio-option"><input type="radio" name="behaviour" value="Nice" checked> Nice 😇</label>
-    <label class="radio-option"><input type="radio" name="behaviour" value="A little Naughty"> A little bit naughty 🤭</label>
-    <label class="radio-option"><input type="radio" name="behaviour" value="It wasn't my fault"> Naughty, but it wasn't my fault 😟</label>
+    <label class="radio-option"><input type="radio" name="behaviour" value="A little Naughty"> Naughty 😈</label>
   </div>
 
   <div class="wishlist-section">
@@ -172,7 +171,7 @@
   <label>A Message for Santa</label>
   <textarea id="message" style="min-height: 80px;" placeholder="Dear Santa..."></textarea>
 
-  <label>Where should Santa reply to?</label>
+  <label class="reply-label">Where should Santa reply to?</label>
   <textarea id="address" style="min-height: 50px;" placeholder="Street, Town, Postcode"></textarea>
 
   <div class="address-box">
@@ -208,7 +207,7 @@
   }
 
   function validateAndProcess(action) {
-    // Play the "Ho Ho Ho" sound provided
+    // Sound playback
     const sound = document.getElementById("santaSound");
     if (sound) { sound.play(); }
 
