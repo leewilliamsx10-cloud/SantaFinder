@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Letter to Santa 🎅</title>
+<title>Write a Letter to Santa 🎅</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- EmailJS -->
@@ -18,11 +18,11 @@
 
   .container {
     background: rgba(255, 255, 255, 0.95);
-    max-width: 600px;
+    max-width: 650px;
     margin: auto;
     padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    border-radius: 16px;
+    box-shadow: 0 0 18px rgba(0,0,0,0.35);
   }
 
   h1 {
@@ -41,14 +41,17 @@
     padding: 10px;
     font-size: 16px;
     margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
   }
 
   textarea {
-    min-height: 150px;
+    min-height: 120px;
   }
 
   .radio-group {
     margin-top: 10px;
+    font-size: 16px;
   }
 
   button {
@@ -56,30 +59,56 @@
     width: 100%;
     padding: 15px;
     font-size: 18px;
-    background: #2a9d8f;
-    color: white;
+    border-radius: 10px;
     border: none;
-    border-radius: 8px;
     cursor: pointer;
   }
 
-  button:hover {
+  .send-btn {
+    background: #2a9d8f;
+    color: #fff;
+  }
+
+  .send-btn:hover {
     background: #21867a;
   }
 
   .print-btn {
     background: #457b9d;
+    color: #fff;
+  }
+
+  .print-btn:hover {
+    background: #365f7c;
   }
 
   .notice {
     font-size: 13px;
-    color: #333;
     margin-top: 20px;
     background: #fefae0;
-    padding: 10px;
+    padding: 12px;
     border-radius: 8px;
   }
 
+  .address-box {
+    margin-top: 20px;
+    background: #edf6f9;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  @media print {
+    button, .notice {
+      display: none;
+    }
+    body {
+      background: none;
+    }
+    .container {
+      box-shadow: none;
+    }
+  }
 </style>
 </head>
 
@@ -89,10 +118,14 @@
   <h1>✉️ Write a Letter to Santa 🎄</h1>
 
   <label>Your Name</label>
-  <input type="text" id="name" placeholder="e.g. Jack">
+  <input type="text" id="name" placeholder="e.g. Emily">
 
   <label>Your Age</label>
-  <input type="number" id="age" placeholder="e.g. 6">
+  <input type="number" id="age" placeholder="e.g. 7">
+
+  <label>Your Home Address (for Santa’s reply)</label>
+  <textarea id="address" placeholder="House number, street, town, postcode"></textarea>
+  <p style="font-size:13px;color:#555;">Ask a grown-up before adding your address.</p>
 
   <label>Have you been Naughty or Nice?</label>
   <div class="radio-group">
@@ -103,30 +136,54 @@
   <label>Your Letter</label>
   <textarea id="message" placeholder="Dear Santa..."></textarea>
 
-  <button onclick="sendLetter()">Send to Santa 🎅</button>
-  <button class="print-btn" onclick="printLetter()">Print My Letter 🖨️</button>
+  <div class="address-box">
+    <strong>My Address for Santa:</strong><br>
+    <span id="printAddressText">Not written</span>
+  </div>
+
+  <button class="send-btn" onclick="sendLetter()">Send to Santa 🎅</button>
+  <button class="print-btn" onclick="window.print()">Print My Letter 🖨️</button>
+
+  <div class="address-box">
+    <strong>📮 Want Santa to write back?</strong><br><br>
+    Santa Claus<br>
+    Santa’s Grotto<br>
+    Reindeerland<br>
+    XM4 5HQ<br>
+    United Kingdom<br><br>
+    No stamp needed when posting from the UK.
+  </div>
 
   <div class="notice">
-    <strong>Grown-up Notice:</strong><br>
-    This page does not store any information.<br>
-    Emails are sent securely to Santa’s helpers.<br>
-    Adult supervision is recommended.
+    <strong>Privacy & Safety Notice</strong><br>
+    This page does not store personal information.<br>
+    Letters are emailed securely and not saved on this website.<br>
+    Home addresses should only be entered with adult permission.<br>
+    Adult supervision is recommended at all times.
   </div>
 </div>
 
 <script>
-  (function(){
+  // EmailJS init
+  (function() {
     emailjs.init("YOUR_PUBLIC_KEY");
   })();
+
+  // Live print address update
+  document.getElementById("address").addEventListener("input", function () {
+    document.getElementById("printAddressText").innerText =
+      this.value || "Not written";
+  });
 
   function sendLetter() {
     const name = document.getElementById("name").value.trim();
     const age = document.getElementById("age").value.trim();
     const message = document.getElementById("message").value.trim();
+    const address = document.getElementById("address").value.trim();
     const behaviour = document.querySelector('input[name="behaviour"]:checked').value;
 
     if (!name || !message) {
-      alert("Please add your name and letter first!");
+      alert("Please add your name and your letter first!");
       return;
     }
 
@@ -134,18 +191,15 @@
       child_name: name,
       child_age: age,
       naughty_nice: behaviour,
-      letter_message: message
+      letter_message: message,
+      reply_address: address || "Not provided"
     })
     .then(() => {
       alert("🎄 Your letter has been sent to Santa!");
     })
     .catch(() => {
-      alert("Oops! Santa's mailbag is full. Try again later.");
+      alert("Oops! Santa's mailbag is full. Please try again later.");
     });
-  }
-
-  function printLetter() {
-    window.print();
   }
 </script>
 
