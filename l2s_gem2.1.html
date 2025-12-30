@@ -54,8 +54,37 @@
   label { display: block; margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
   input, textarea, select { width: 100%; padding: 12px; font-size: 16px; margin-top: 5px; border-radius: 10px; border: 2px solid #eee; box-sizing: border-box; }
 
-  .radio-group { background: #fdfdfd; padding: 12px; border-radius: 10px; border: 2px solid #eee; margin-top: 8px; display: flex; flex-direction: column; gap: 10px; }
-  .radio-option { display: flex; align-items: center; cursor: pointer; gap: 8px; font-weight: normal; font-size: 15px; }
+  /* --- Updated Radio Group Formatting --- */
+  .radio-group { 
+    background: #ffffff; 
+    padding: 15px; 
+    border-radius: 12px; 
+    border: 2px solid #eee; 
+    margin-top: 8px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+  }
+  .radio-option { 
+    display: flex; 
+    align-items: center; 
+    cursor: pointer; 
+    gap: 12px; 
+    font-weight: normal; 
+    font-size: 16px;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .radio-option:hover {
+    background: #f9f9f9;
+  }
+  .radio-option input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    cursor: pointer;
+  }
 
   /* Hidden on screen, shown on print */
   #print-behavior-text { display: none; font-size: 18px; margin-top: 15px; font-weight: bold; }
@@ -166,100 +195,3 @@
 
   <div class="signature-area">
     X Signature of the Sender
-  </div>
-
-  <div class="address-box privacy-notice" style="font-size:13px; margin-top: 10px; border-style: dotted; min-height: auto;">
-    <strong>Privacy & Safety Notice</strong><br>
-    This page does not store personal data.<br>
-    Emails are sent using the device’s email app.<br>
-    Home addresses should only be entered with adult permission.<br>
-    Adult supervision is recommended at all times.
-  </div>
-
-  <button type="button" class="main-btn send-btn" onclick="validateAndProcess('email')">Send email to Santa's helpers 📤</button>
-  <button type="button" class="main-btn print-btn" onclick="validateAndProcess('print')">Print my letter to send to Santa 📮</button>
-</div>
-
-<script>
-  function setTheme(theme, btn) {
-    document.body.className = 'theme-' + theme;
-    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    const stampLabel = document.getElementById('stampLabel');
-    if(stampLabel) {
-        switch(theme) {
-          case 'snow': stampLabel.innerHTML = "NORTH POLE<br>ICE MAIL"; break;
-          case 'reindeer': stampLabel.innerHTML = "FLYING EXPRESS<br>MAIL"; break;
-          case 'gingerbread': stampLabel.innerHTML = "BAKED AT<br>NORTH POLE"; break;
-          case 'presents': stampLabel.innerHTML = "PARCEL POST<br>NORTH POLE"; break;  
-          default: stampLabel.innerHTML = "SANTA POST<br>NORTH POLE";
-        }
-    }
-  }
-
-  function validateAndProcess(action) {
-    const sound = document.getElementById("santaSound");
-    if (sound) { sound.play(); }
-
-    const nameInput = document.getElementById("name");
-    const ageInput = document.getElementById("age");
-    const addressInput = document.getElementById("address");
-    const messageInput = document.getElementById("message");
-
-    const name = nameInput.value.trim();
-    const age = ageInput.value.trim();
-    const address = addressInput.value.trim();
-    const message = messageInput.value.trim();
-
-    if (!name || !age || !address) {
-      alert("🎅 Ho Ho Ho! Santa needs your Name, Age, and Address to find you!");
-      return;
-    }
-
-    if (action === 'print') {
-      // Set the behavior text for the printer
-      const behaviorSelection = document.querySelector('input[name="behaviour"]:checked').value;
-      document.getElementById('status-val').innerText = behaviorSelection;
-
-      const inputs = document.querySelectorAll('input, textarea');
-      const savedPlaceholders = Array.from(inputs).map(i => i.placeholder);
-      inputs.forEach(i => i.placeholder = "");
-
-      window.print();
-
-      inputs.forEach((i, idx) => i.placeholder = savedPlaceholders[idx]);
-    } else {
-      sendViaEmail(name, age, address, message);
-    }
-  }
-
-  function sendViaEmail(name, age, address, message) {
-    const behavior = document.querySelector('input[name="behaviour"]:checked').value;
-    let wishlist = "";
-    document.querySelectorAll('.toy-name').forEach((toy, i) => {
-      if(toy.value.trim()) {
-        wishlist += `- ${toy.value.trim()} (${document.querySelectorAll('.toy-priority')[i].value})\n`;
-      }
-    });
-
-    const recipient = "lee.williams@great-aycliffe.gov.uk"; 
-    const subject = `Christmas Letter from ${name}`;
-    const body = `Dear Santa,\n\nMy name is ${name} and I am ${age} years old. \nThis year, I have been ${behavior}!\n\nMy Message:\n${message}\n\nMy Wishlist:\n${wishlist || "I'll be happy with any surprise!"}\n\nPlease reply to:\n${address}\n\nLove, \n${name}`;
-
-    window.location.href = "mailto:" + recipient + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-  }
-
-  function addRow() {
-    const table = document.getElementById("wishlistTable").getElementsByTagName('tbody')[0];
-    const newRow = table.insertRow();
-    newRow.innerHTML = '<td><input type="text" class="toy-name"></td><td><select class="toy-priority"><option value="Must Have!">Must Have! ⭐</option><option value="Pretty Please">Pretty Please 🙏</option><option value="Maybe?">Maybe? 😊</option></select></td><td><button type="button" class="btn-remove" onclick="this.parentElement.parentElement.remove()">✕</button></td>';
-  }
-
-  document.getElementById("address").addEventListener("input", function() {
-    document.getElementById("printAddressText").innerText = this.value || "Waiting for your address...";
-  });
-</script>
-
-</body>
-</html>
