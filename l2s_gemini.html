@@ -246,7 +246,7 @@
     });
 
     const recipient = "lee.williams@great-aycliffe.gov.uk"; 
-    const subject = `Christmas Letter from ${name}`;
+    const subject = `Christmas Letter from ${name}, aged ${age}`;
     const body = `Dear Santa,\n\nMy name is ${name} and I am ${age} years old. \nThis year, I have been ${behavior}!\n\nMy Message:\n${message}\n\nMy Wishlist:\n${wishlist || "I'll be happy with any surprise!"}\n\nPlease reply to:\n${address}\n\nLove, \n${name}`;
 
     const mailtoLink = "mailto:" + recipient + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
