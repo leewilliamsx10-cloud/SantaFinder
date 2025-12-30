@@ -40,17 +40,9 @@
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.4);
     border: 8px solid white;
-    position: relative;    
+    position: relative;
   }
 
-<div class="address-box" style="font-size:13px;">
-    <strong>Privacy & Safety Notice</strong><br>
-    This page does not store personal data.<br>
-    Emails are sent using the device’s email app.<br>
-  Home addresses should only be entered with adult permission, but are required to receive a letter from Santa <br>
-  Adult supervision is recommended at all times.
-</div>
-  
   .theme-picker { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
   .theme-btn { border: 2px solid #ddd; background: white; padding: 8px 12px; border-radius: 50px; cursor: pointer; font-size: 14px; transition: 0.3s; }
   .theme-btn.active { background: var(--gold); border-color: #333; font-weight: bold; }
@@ -86,8 +78,8 @@
       padding: 0;
     }
 
-    /* Hide theme picker, buttons, and the interactive address input box */
-    .theme-picker, button, .btn-add, .btn-remove, .radio-group, .reply-label, #address { 
+    /* Hide UI elements and Privacy Notice from the printed page */
+    .theme-picker, button, .btn-add, .btn-remove, .radio-group, .reply-label, #address, .privacy-notice { 
       display: none !important; 
     }
 
@@ -153,8 +145,7 @@
   <label>Have you been Naughty or Nice?</label>
   <div class="radio-group">
     <label class="radio-option"><input type="radio" name="behaviour" value="Nice" checked> Nice 😇</label>
-    <label class="radio-option"><input type="radio" name="behaviour" value="A little Naughty"> A little bit naughty 🤭</label>
-    <label class="radio-option"><input type="radio" name="behaviour" value="It wasn't my fault"> Naughty, but it wasn't my fault 😟</label>
+    <label class="radio-option"><input type="radio" name="behaviour" value="A little Naughty"> Naughty 😈</label>
   </div>
 
   <div class="wishlist-section">
@@ -193,6 +184,14 @@
     X Signature of the Sender
   </div>
 
+  <div class="address-box privacy-notice" style="font-size:13px; margin-top: 10px; border-style: dotted; min-height: auto;">
+    <strong>Privacy & Safety Notice</strong><br>
+    This page does not store personal data.<br>
+    Emails are sent using the device’s email app.<br>
+    Home addresses should only be entered with adult permission.<br>
+    Adult supervision is recommended at all times.
+  </div>
+
   <button type="button" class="main-btn send-btn" onclick="validateAndProcess('email')">Send email to Santa's helpers 📤</button>
   <button type="button" class="main-btn print-btn" onclick="validateAndProcess('print')">Print my letter to send to Santa 📮</button>
 </div>
@@ -216,9 +215,8 @@
   }
 
   function validateAndProcess(action) {
-    // Sound playback
     const sound = document.getElementById("santaSound");
-    if (sound) { sound.play(); }
+    if (sound) { sound.play(); } //
 
     const nameInput = document.getElementById("name");
     const ageInput = document.getElementById("age");
