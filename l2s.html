@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Write a Letter to Santa 🎅</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+  :root {
+    --santa-red: #c1121f;
+    --tree-green: #2a9d8f;
+    --gold: #e9c46a;
+  }
+
+  body {
+    font-family: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
+    background: #a8dadc url("https://images.unsplash.com/photo-1543589077-47d81606c1bf") no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 20px;
+  }
+
+  .container {
+    background: rgba(255, 255, 255, 0.95);
+    max-width: 700px;
+    margin: auto;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    border: 8px solid white;
+  }
+
+  h1 { text-align: center; color: var(--santa-red); margin-top: 0; }
+  
+  label { display: block; margin-top: 15px; font-weight: bold; color: #333; }
+
+  input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 5px;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    box-sizing: border-box;
+  }
+
+  /* Wishlist Styling */
+  .wishlist-section {
+    margin-top: 25px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
+  }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th { text-align: left; font-size: 14px; color: #666; padding-bottom: 5px; }
+  td { padding: 5px 2px; }
+
+  .btn-add {
+    background: var(--gold);
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  .btn-remove {
+    background: #e63946;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+  }
+
+  .radio-group {
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+  }
+
+  button.main-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  .send-btn { background: var(--tree-green); color: white; }
+  .print-btn { background: #457b9d; color: white; }
+
+  .address-box {
+    margin-top: 20px;
+    background: #edf6f9;
+    padding: 15px;
+    border-left: 5px solid var(--tree-green);
+    border-radius: 5px;
+  }
+
+  @media print {
+    button, .btn-add, .btn-remove, .notice { display: none !important; }
+    body { background: none; padding: 0; }
+    .container { box-shadow: none; border: 1px solid #eee; max-width: 100%; }
+    input, textarea { border: none; background: transparent; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>✉️ My Letter to Santa 🎄</h1>
+
+  <label>Your Name</label>
+  <input type="text" id="name" placeholder="e.g. Alex">
+
+  <label>Have you been Naughty or Nice?</label>
+  <div class="radio-group">
+    <input type="radio" name="behaviour" value="Nice" checked style="width: auto;"> Nice 😇 &nbsp;&nbsp;
+    <input type="radio" name="behaviour" value="A little Naughty" style="width: auto;"> A little Naughty 😈
+  </div>
+
+  <div class="wishlist-section">
+    <strong>🎁 My Christmas Wishlist</strong>
+    <table id="wishlistTable">
+      <thead>
+        <tr>
+          <th style="width: 70%;">Toy or Gift</th>
+          <th style="width: 20%;">Priority</th>
+          <th style="width: 10%;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text" class="toy-name" placeholder="e.g. Lego Set"></td>
+          <td>
+            <select class="toy-priority">
+              <input type="text" placeholder="Priority">
+              <option value="Must Have!">Must Have!</option>
+              <option value="Pretty Please">Pretty Please</option>
+              <option value="Maybe?">Maybe?</option>
+            </select>
+          </td>
+          <td></td> </tr>
+      </tbody>
+    </table>
+    <button type="button" class="btn-add" onclick="addRow()">+ Add Another Toy</button>
+  </div>
+
+  <label>A Special Message for Santa</label>
+  <textarea id="message" placeholder="Dear Santa, thank you for..."></textarea>
+
+  <label>Address for Santa's Reply</label>
+  <textarea id="address" style="min-height: 50px;" placeholder="Your street and town"></textarea>
+
+  <div class="address-box">
+    <strong>Delivery Address:</strong><br>
+    <span id="printAddressText">Not provided yet</span>
+  </div>
+
+  <button class="main-btn send-btn" id="sendBtn" onclick="sendLetter()">Send to the North Pole 🚀</button>
+  <button class="main-btn print-btn" onclick="window.print()">Print My Letter 🖨️</button>
+
+</div>
+
+<script>
+  (function() { emailjs.init("YOUR_PUBLIC_KEY"); })();
+
+  // Add row to Wishlist
+  function addRow() {
+    const table = document.getElementById("wishlistTable").getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+    newRow.innerHTML = `
+      <td><input type="text" class="toy-name" placeholder="Enter toy name"></td>
+      <td>
+        <select class="toy-priority">
+          <option value="Must Have!">Must Have!</option>
+          <option value="Pretty Please">Pretty Please</option>
+          <option value="Maybe?">Maybe?</option>
+        </select>
+      </td>
+      <td><button class="btn-remove" onclick="this.parentElement.parentElement.remove()">✕</button></td>
+    `;
+  }
+
+  // Update Address Box
+  document.getElementById("address").addEventListener("input", function() {
+    document.getElementById("printAddressText").innerText = this.value || "Not provided yet";
+  });
+
+  async function sendLetter() {
+    const btn = document.getElementById("sendBtn");
+    const name = document.getElementById("name").value.trim();
+    const message = document.getElementById("message").value.trim();
+    
+    // Compile Wishlist for the email
+    let wishlistText = "WISH LIST:\n";
+    const toys = document.querySelectorAll('.toy-name');
+    const priorities = document.querySelectorAll('.toy-priority');
+    
+    toys.forEach((toy, index) => {
+      if(toy.value.trim() !== "") {
+        wishlistText += `- ${toy.value} (${priorities[index].value})\n`;
+      }
+    });
+
+    if (!name || !message) {
+      alert("Please fill in your name and a message for Santa!");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "Sending... ❄️";
+
+    const templateParams = {
+      child_name: name,
+      naughty_nice: document.querySelector('input[name="behaviour"]:checked').value,
+      letter_message: `${message}\n\n${wishlistText}`,
+      reply_address: document.getElementById("address").value || "No address provided"
+    };
+
+    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", templateParams)
+      .then(() => {
+        alert("Success! Your letter is on its way to Santa!");
+        btn.innerText = "Sent! ✅";
+      })
+      .catch(() => {
+        alert("Error sending letter. Please try again!");
+        btn.disabled = false;
+        btn.innerText = "Send to the North Pole 🚀";
+      });
+  }
+</script>
+
+</body>
+</html>
