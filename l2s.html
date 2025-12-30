@@ -134,32 +134,100 @@
     <input type="radio" name="behaviour" value="A little Naughty" style="width: auto;"> A little Naughty 😈
   </div>
 
-  <div class="wishlist-section">
-    <strong>🎁 My Christmas Wishlist</strong>
-    <table id="wishlistTable">
-      <thead>
-        <tr>
-          <th style="width: 70%;">Toy or Gift</th>
-          <th style="width: 20%;">Priority</th>
-          <th style="width: 10%;"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="text" class="toy-name" placeholder="e.g. Lego Set"></td>
-          <td>
-            <select class="toy-priority">
-              <input type="text" placeholder="Priority">
-              <option value="Must Have!">Must Have!</option>
-              <option value="Pretty Please">Pretty Please</option>
-              <option value="Maybe?">Maybe?</option>
-            </select>
-          </td>
-          <td></td> </tr>
-      </tbody>
-    </table>
-    <button type="button" class="btn-add" onclick="addRow()">+ Add Another Toy</button>
-  </div>
+<div class="wishlist-section">
+  <strong>🎁 My Christmas Wishlist</strong>
+  <table id="wishlistTable">
+    <thead>
+      <tr>
+        <th style="width: 65%;">Toy or Gift</th>
+        <th style="width: 25%;">How much I want it</th>
+        <th style="width: 10%;"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input type="text" class="toy-name" placeholder="e.g. Lego Set"></td>
+        <td>
+          <select class="toy-priority">
+            <option value="Must Have!">Must Have! ⭐</option>
+            <option value="Pretty Please">Pretty Please 🙏</option>
+            <option value="Maybe?">Maybe? 😊</option>
+          </select>
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="button" class="btn-add" onclick="addRow()">+ Add Another Toy</button>
+</div>
+
+<script>
+  // Corrected AddRow Function to match the fixed first row
+  function addRow() {
+    const table = document.getElementById("wishlistTable").getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+    newRow.innerHTML = `
+      <td><input type="text" class="toy-name" placeholder="Enter toy name"></td>
+      <td>
+        <select class="toy-priority">
+          <option value="Must Have!">Must Have! ⭐</option>
+          <option value="Pretty Please">Pretty Please 🙏</option>
+          <option value="Maybe?">Maybe? 😊</option>
+        </select>
+      </td>
+      <td><button class="btn-remove" onclick="this.parentElement.parentElement.remove()">✕</button></td>
+    `;
+  }
+
+  // Improved Email Logic to capture the list correctly
+  async function sendLetter() {
+    const btn = document.getElementById("sendBtn");
+    const name = document.getElementById("name").value.trim();
+    const message = document.getElementById("message").value.trim();
+    
+    // Compile Wishlist
+    let wishlistArray = [];
+    const toys = document.querySelectorAll('.toy-name');
+    const priorities = document.querySelectorAll('.toy-priority');
+    
+    toys.forEach((toy, index) => {
+      if(toy.value.trim() !== "") {
+        wishlistArray.push(`${toy.value.trim()} (${priorities[index].value})`);
+      }
+    });
+
+    const wishlistText = wishlistArray.length > 0 
+      ? "\n\nMY WISHLIST:\n" + wishlistArray.join("\n") 
+      : "\n\n(No specific toys requested)";
+
+    if (!name || !message) {
+      alert("Santa needs to know your name and your letter message! 🎅");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "Sending... ❄️";
+
+    const templateParams = {
+      child_name: name,
+      naughty_nice: document.querySelector('input[name="behaviour"]:checked').value,
+      letter_message: message + wishlistText, // Combines message and the list
+      reply_address: document.getElementById("address").value || "No address provided"
+    };
+
+    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", templateParams)
+      .then(() => {
+        alert("Success! Your letter is on its way to Santa!");
+        btn.innerText = "Sent! ✅";
+      })
+      .catch((err) => {
+        console.error("EmailJS Error:", err);
+        alert("Error sending letter. Please check your EmailJS Keys!");
+        btn.disabled = false;
+        btn.innerText = "Send to the North Pole 🚀";
+      });
+  }
+</script>
 
   <label>A Special Message for Santa</label>
   <textarea id="message" placeholder="Dear Santa, thank you for..."></textarea>
