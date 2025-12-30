@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Write a Letter to Santa 🎅</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  :root {
+    --santa-red: #c1121f;
+    --tree-green: #2a9d8f;
+    --gold: #e9c46a;
+    --paper: #fefae0;
+    --accent: #c1121f;
+  }
+
+  /* Themes - Swapping Background Images */
+  body.theme-santa { 
+    background-image: url("https://images.unsplash.com/photo-1543589077-47d81606c1bf"); 
+    --accent: #c1121f; 
+  }
+  body.theme-snow { 
+    background-image: url("https://images.unsplash.com/photo-1418985991508-e47386d96a71"); 
+    --accent: #457b9d; 
+  }
+  body.theme-reindeer { 
+    background-image: url("https://images.unsplash.com/photo-1512435133373-89025e656121"); 
+    --accent: #8b5a2b; 
+  }
+  body.theme-gingerbread { 
+    background-image: url("https://images.unsplash.com/photo-1575549594213-958f0012f5ba"); 
+    --accent: #d4a373; 
+    --paper: #faedcd;
+  }
+
+  body {
+    font-family: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 20px;
+    transition: background-image 0.5s ease;
+  }
+
+  .container {
+    background: rgba(255, 255, 255, 0.95);
+    max-width: 650px;
+    margin: auto;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    border: 8px solid white;
+  }
+
+  /* Theme Picker */
+  .theme-picker {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .theme-btn {
+    border: 2px solid #ddd;
+    background: white;
+    padding: 8px 12px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+  }
+  .theme-btn.active { background: var(--gold); border-color: #333; font-weight: bold; }
+
+  h1 { text-align: center; color: var(--santa-red); font-size: 28px; margin-top: 0; }
+  
+  .row { display: flex; gap: 15px; margin-bottom: 10px; }
+  .col { flex: 1; }
+
+  label { display: block; margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
+
+  input, textarea, select {
+    width: 100%; padding: 12px; font-size: 16px; margin-top: 5px;
+    border-radius: 10px; border: 2px solid #eee; box-sizing: border-box;
+  }
+
+  .radio-group { 
+    background: #fdfdfd; padding: 12px; border-radius: 10px; border: 2px solid #eee; 
+    margin-top: 8px; display: flex; gap: 20px; 
+  }
+  .radio-option { display: flex; align-items: center; cursor: pointer; gap: 8px; font-weight: normal; }
+
+  .wishlist-section {
+    margin: 25px 0; background: #f1f8f7; padding: 15px;
+    border-radius: 12px; border: 2px dashed var(--tree-green);
+  }
+
+  .btn-add { background: var(--gold); padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
+  .btn-remove { background: #e63946; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; }
+
+  .main-btn { margin-top: 15px; width: 100%; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 12px; border: none; cursor: pointer; transition: 0.2s; }
+  .send-btn { background: var(--tree-green); color: white; }
+  .print-btn { background: #457b9d; color: white; }
+
+  .address-box {
+    margin-top: 20px; background: var(--paper); padding: 20px;
+    border: 1px solid #d4a373; border-radius: 5px; position: relative; min-height: 80px;
+  }
+
+  .stamp {
+    position: absolute; top: 10px; right: 10px; width: 60px; height: 60px;
+    border: 3px double var(--accent); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: bold; transform: rotate(15deg); border-radius: 5px; text-align: center;
+  }
+
+  @media print {
+    .theme-picker, button, .btn-add, .btn-remove, .radio-group { display: none !important; }
+    body { background: white !important; padding: 0; }
+    .container { box-shadow: none; border: none; max-width: 100%; }
+  }
+</style>
+</head>
+
+<body class="theme-santa">
+
+<div class="container">
+  <div class="theme-picker">
+    <button class="theme-btn active" onclick="setTheme('santa', this)">🎅 Santa</button>
+    <button class="theme-btn" onclick="setTheme('snow', this)">❄️ Snow</button>
+    <button class="theme-btn" onclick="setTheme('reindeer', this)">🦌 Reindeer</button>
+    <button class="theme-btn" onclick="setTheme('gingerbread', this)">🍪 Cookie</button>
+  </div>
+
+  <h1>✉️ My Letter to Santa 🎄</h1>
+
+  <div class="row">
+    <div class="col">
+      <label>Your Name</label>
+      <input type="text" id="name" placeholder="Alex">
+    </div>
+    <div class="col" style="flex: 0.3;">
+      <label>Age</label>
+      <input type="number" id="age" placeholder="7">
+    </div>
+  </div>
+
+  <label>Have you been Naughty or Nice?</label>
+  <div class="radio-group">
+    <label class="radio-option"><input type="radio" name="behaviour" value="Nice" checked> Nice 😇</label>
+    <label class="radio-option"><input type="radio" name="behaviour" value="A little Naughty"> Naughty 😈</label>
+  </div>
+
+  <div class="wishlist-section">
+    <strong>🎁 My Christmas Wishlist</strong>
+    <table id="wishlistTable" style="width:100%; margin-top:10px;">
+      <tbody>
+        <tr>
+          <td><input type="text" class="toy-name" placeholder="e.g. A blue bike"></td>
+          <td style="width:35%">
+            <select class="toy-priority">
+              <option value="Must Have!">Must Have! ⭐</option>
+              <option value="Pretty Please">Pretty Please 🙏</option>
+              <option value="Maybe?">Maybe? 😊</option>
+            </select>
+          </td>
+          <td style="width:10%"></td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="button" class="btn-add" onclick="addRow()">+ Add Another Toy</button>
+  </div>
+
+  <label>A Message for Santa</label>
+  <textarea id="message" style="min-height: 80px;" placeholder="Dear Santa..."></textarea>
+
+  <label>Where should Santa reply to?</label>
+  <textarea id="address" style="min-height: 50px;" placeholder="Street, Town, Postcode"></textarea>
+
+  <div class="address-box">
+    <div class="stamp" id="stampLabel">NORTH POLE<br>OFFICIAL</div>
+    <strong>Deliver to:</strong><br>
+    <span id="printAddressText">Waiting for your address...</span>
+  </div>
+
+  <button class="main-btn send-btn" onclick="sendViaEmail()">Send to Santa 🚀</button>
+  <button class="main-btn print-btn" onclick="window.print()">Print My Letter 🖨️</button>
+</div>
+
+<script>
+  function setTheme(theme, btn) {
+    document.body.className = 'theme-' + theme;
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('stampLabel').innerHTML = theme === 'gingerbread' ? "BAKED AT<br>NORTH POLE" : "NORTH POLE<br>OFFICIAL";
+  }
+
+  function addRow() {
+    const table = document.getElementById("wishlistTable").getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+    newRow.innerHTML = `
+      <td><input type="text" class="toy-name"></td>
+      <td>
+        <select class="toy-priority">
+          <option value="Must Have!">Must Have! ⭐</option>
+          <option value="Pretty Please">Pretty Please 🙏</option>
+          <option value="Maybe?">Maybe? 😊</option>
+        </select>
+      </td>
+      <td><button class="btn-remove" onclick="this.parentElement.parentElement.remove()">✕</button></td>`;
+  }
+
+  document.getElementById("address").addEventListener("input", function() {
+    document.getElementById("printAddressText").innerText = this.value || "Waiting for your address...";
+  });
+
+  function sendViaEmail() {
+    const name = document.getElementById("name").value.trim();
+    const age = document.getElementById("age").value.trim();
+    const message = document.getElementById("message").value.trim();
+    const behavior = document.querySelector('input[name="behaviour"]:checked').value;
+    const address = document.getElementById("address").value.trim();
+    
+    if (!name || !message) {
+      alert("Please enter your name and write a message first!");
+      return;
+    }
+
+    let wishlist = "";
+    document.querySelectorAll('.toy-name').forEach((toy, i) => {
+      if(toy.value.trim()) {
+        wishlist += `- ${toy.value.trim()} (${document.querySelectorAll('.toy-priority')[i].value})\n`;
+      }
+    });
+
+    const recipient = "santa@northpole.com"; // Set this to the parent/teacher email
+    const subject = `Christmas Letter from ${name}`;
+    const body = `Dear Santa,
+
+My name is ${name} and I am ${age || 'some'} years old. 
+This year, I have been ${behavior}!
+
+My Message:
+${message}
+
+My Wishlist:
+${wishlist || "I'll be happy with any surprise!"}
+
+Please reply to:
+${address || "No address provided"}
+
+Love, 
+${name}`;
+
+    const mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+  }
+</script>
+
+</body>
+</html>
