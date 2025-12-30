@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Write a Letter to Santa 🎅</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+  :root {
+    --santa-red: #c1121f;
+    --tree-green: #2a9d8f;
+    --snow-white: #ffffff;
+  }
+
+  body {
+    font-family: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
+    background: #a8dadc url("https://images.unsplash.com/photo-1543589077-47d81606c1bf") no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    background: rgba(255, 255, 255, 0.92);
+    width: 100%;
+    max-width: 600px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    border: 5px solid white;
+  }
+
+  h1 {
+    text-align: center;
+    color: var(--santa-red);
+    font-size: 2rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    margin-top: 0;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+    box-sizing: border-box; /* Fixes width overflow */
+    transition: border-color 0.3s;
+  }
+
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--tree-green);
+    background-color: #f0fff4;
+  }
+
+  .radio-group {
+    background: #f1f1f1;
+    padding: 10px;
+    border-radius: 12px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+
+  button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+
+  button:active { transform: scale(0.98); }
+
+  .send-btn { background: var(--tree-green); color: white; }
+  .print-btn { background: #457b9d; color: white; margin-top: 10px; }
+
+  .address-preview {
+    margin-top: 20px;
+    background: #fff;
+    padding: 15px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    position: relative;
+  }
+
+  .address-preview::before {
+    content: "✉️ Santa's Reply To:";
+    font-size: 12px;
+    color: #888;
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .notice {
+    font-size: 12px;
+    margin-top: 25px;
+    background: #fff9c4;
+    padding: 15px;
+    border-radius: 10px;
+    line-height: 1.4;
+  }
+
+  /* Snow Effect */
+  .snow { color: white; position: fixed; top: -10px; z-index: 9999; user-select: none; pointer-events: none; }
+
+  @media print {
+    button, .notice, .snow { display: none !important; }
+    body { background: white; padding: 0; }
+    .container { box-shadow: none; border: none; max-width: 100%; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>✉️ Letter to Santa 🎄</h1>
+
+  <div class="form-group">
+    <label for="name">Your Name</label>
+    <input type="text" id="name" placeholder="e.g. Emily" required>
+  </div>
+
+  <div class="form-group">
+    <label for="age">How old are you?</label>
+    <input type="number" id="age" placeholder="7">
+  </div>
+
+  <div class="form-group">
+    <label>Have you been Naughty or Nice?</label>
+    <div class="radio-group">
+      <label style="font-weight:normal;"><input type="radio" name="behaviour" value="Nice" checked> Nice 😇</label>
+      <label style="font-weight:normal;"><input type="radio" name="behaviour" value="Naughty"> A little Naughty 😈</label>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="message">Your Letter</label>
+    <textarea id="message" placeholder="Dear Santa, this year I would like..."></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="address">Where do you live? (Optional)</label>
+    <textarea id="address" style="min-height: 60px;" placeholder="Street name and Town"></textarea>
+    <small style="color:#666;">Ask a grown-up for help with this part!</small>
+  </div>
+
+  <div class="address-preview">
+    <span id="printAddressText">Waiting for your address...</span>
+  </div>
+
+  <button class="send-btn" id="sendBtn" onclick="sendLetter()">Send to the North Pole 🚀</button>
+  <button class="print-btn" onclick="window.print()">Print My Letter 🖨️</button>
+
+  <div class="notice">
+    <strong>🛡️ Parents' Safety Note:</strong> We don't save any data. This letter is sent directly via email and wiped when you close the page.
+  </div>
+</div>
+
+<script>
+  // Initialize EmailJS (Replace with your actual key)
+  (function() {
+    emailjs.init("YOUR_PUBLIC_KEY");
+  })();
+
+  // Update Address Preview
+  const addressInput = document.getElementById("address");
+  const addressDisplay = document.getElementById("printAddressText");
+
+  addressInput.addEventListener("input", () => {
+    addressDisplay.innerText = addressInput.value || "Waiting for your address...";
+  });
+
+  async function sendLetter() {
+    const btn = document.getElementById("sendBtn");
+    const data = {
+      name: document.getElementById("name").value.trim(),
+      age: document.getElementById("age").value.trim(),
+      behaviour: document.querySelector('input[name="behaviour"]:checked').value,
+      message: document.getElementById("message").value.trim(),
+      address: addressInput.value.trim() || "Not provided"
+    };
+
+    if (!data.name || !data.message) {
+      alert("Don't forget to write your name and your letter! 🎅");
+      return;
+    }
+
+    // Update UI to show sending
+    btn.disabled = true;
+    btn.innerText = "Sending to North Pole... ❄️";
+    btn.style.opacity = "0.7";
+
+    try {
+      await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+        child_name: data.name,
+        child_age: data.age,
+        naughty_nice: data.behaviour,
+        letter_message: data.message,
+        reply_address: data.address
+      });
+      
+      alert("✨ Success! Your letter is flying to the North Pole! 🦌");
+      btn.innerText = "Letter Sent! ✅";
+    } catch (error) {
+      alert("Oh no! The reindeer are stuck in a storm. Please try again!");
+      btn.disabled = false;
+      btn.innerText = "Try Sending Again 🚀";
+    }
+  }
+</script>
+
+</body>
+</html>
