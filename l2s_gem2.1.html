@@ -64,8 +64,38 @@
   label { display: block; margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
   input, textarea, select { width: 100%; padding: 12px; font-size: 16px; margin-top: 5px; border-radius: 10px; border: 2px solid #eee; box-sizing: border-box; }
 
-  .radio-group { background: #ffffff; padding: 15px; border-radius: 12px; border: 2px solid #eee; margin-top: 8px; display: flex; flex-direction: column; gap: 12px; }
-  .radio-option { display: flex; align-items: center; cursor: pointer; gap: 12px; font-weight: normal; font-size: 16px; padding: 5px; }
+  /* --- Fixed Radio Group Formatting --- */
+  .radio-group { 
+    background: #ffffff; 
+    padding: 15px; 
+    border-radius: 12px; 
+    border: 2px solid #eee; 
+    margin-top: 8px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; /* Spacing between rows */
+  }
+  .radio-option { 
+    display: flex; 
+    align-items: center; /* Vertically centers the radio dot and text */
+    cursor: pointer; 
+    gap: 12px; 
+    font-weight: normal; 
+    font-size: 16px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .radio-option:hover {
+    background: #fdfdfd;
+  }
+  .radio-option input[type="radio"] {
+    width: 22px; /* Fixed size for dots */
+    height: 22px;
+    margin: 0; /* Removes default browser margins */
+    cursor: pointer;
+    flex-shrink: 0; /* Prevents dots from squishing */
+  }
 
   #print-behavior-text { display: none; font-size: 18px; margin-top: 15px; font-weight: bold; }
   .signature-area { display: none; }
@@ -120,9 +150,18 @@
 
   <label>Have you been Naughty or Nice?</label>
   <div class="radio-group">
-    <label class="radio-option"><input type="radio" name="behaviour" value="Nice 😇" checked> Nice 😇</label>
-    <label class="radio-option"><input type="radio" name="behaviour" value="A little bit naughty 🤭"> A little bit naughty 🤭</label>
-    <label class="radio-option"><input type="radio" name="behaviour" value="Naughty, but it wasn't my fault 😟"> Naughty, but it wasn't my fault 😟</label>
+    <label class="radio-option">
+        <input type="radio" name="behaviour" value="Nice 😇" checked> 
+        <span>Nice 😇</span>
+    </label>
+    <label class="radio-option">
+        <input type="radio" name="behaviour" value="A little bit naughty 🤭"> 
+        <span>A little bit naughty 🤭</span>
+    </label>
+    <label class="radio-option">
+        <input type="radio" name="behaviour" value="Naughty, but it wasn't my fault 😟"> 
+        <span>Naughty, but it wasn't my fault 😟</span>
+    </label>
   </div>
 
   <div id="print-behavior-text">This year, I have been: <span id="status-val">Nice 😇</span></div>
@@ -177,16 +216,10 @@
 
 <script>
   function setTheme(theme, btn) {
-    // Remove all theme classes from body
     document.body.classList.remove('theme-santa', 'theme-snow', 'theme-reindeer', 'theme-gingerbread', 'theme-presents');
-    // Add the selected theme class
     document.body.classList.add('theme-' + theme);
-    
-    // Update active button state
     document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
-    // Update Stamp Text
     const stampLabel = document.getElementById('stampLabel');
     if(stampLabel) {
         switch(theme) {
