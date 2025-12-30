@@ -54,11 +54,12 @@
   label { display: block; margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
   input, textarea, select { width: 100%; padding: 12px; font-size: 16px; margin-top: 5px; border-radius: 10px; border: 2px solid #eee; box-sizing: border-box; }
 
-  .radio-group { background: #fdfdfd; padding: 12px; border-radius: 10px; border: 2px solid #eee; margin-top: 8px; display: flex; gap: 20px; }
-  .radio-option { display: flex; align-items: center; cursor: pointer; gap: 8px; font-weight: normal; }
+  .radio-group { background: #fdfdfd; padding: 12px; border-radius: 10px; border: 2px solid #eee; margin-top: 8px; display: flex; flex-direction: column; gap: 10px; }
+  .radio-option { display: flex; align-items: center; cursor: pointer; gap: 8px; font-weight: normal; font-size: 15px; }
 
-  /* Hidden on screen, shown on print to display Naughty/Nice status */
-  #print-behavior-text { display: none; font-size: 18px; margin-top: 10px; font-weight: bold; }
+  /* Hidden on screen, shown on print */
+  #print-behavior-text { display: none; font-size: 18px; margin-top: 15px; font-weight: bold; }
+  .signature-area { display: none; }
 
   .wishlist-section { margin: 25px 0; background: #f1f8f7; padding: 15px; border-radius: 12px; border: 2px dashed var(--tree-green); }
   .btn-add { background: var(--gold); padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
@@ -71,30 +72,18 @@
   .address-box { margin-top: 20px; background: var(--paper); padding: 20px; border: 1px solid #d4a373; border-radius: 5px; position: relative; min-height: 80px; }
   .stamp { position: absolute; top: 10px; right: 10px; width: 60px; height: 60px; border: 3px double var(--accent); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; transform: rotate(15deg); border-radius: 5px; text-align: center; }
 
-  .signature-area { display: none; }
-
   /* --- Print Specific Styling --- */
   @media print {
-    body { 
-      background-image: none !important; 
-      background-color: white !important;
-      padding: 0;
-    }
-
-    .theme-picker, button, .btn-add, .btn-remove, .radio-group, .reply-label, #address, .privacy-notice { 
-      display: none !important; 
-    }
-
-    /* Show the text version of behavior on print */
+    body { background-image: none !important; background-color: white !important; padding: 0; }
+    .theme-picker, button, .btn-add, .btn-remove, .radio-group, .reply-label, #address, .privacy-notice { display: none !important; }
+    
     #print-behavior-text { display: block !important; }
+    .signature-area { display: block !important; margin-top: 40px; border-top: 2px solid #333; width: 250px; padding-top: 10px; font-weight: bold; }
 
     .container { 
       box-shadow: none !important; 
       border: 15px double var(--tree-green) !important; 
-      max-width: 100% !important;
-      margin: 0 !important;
-      padding: 40px !important;
-      background: white !important;
+      max-width: 100% !important; margin: 0 !important; padding: 40px !important; background: white !important;
     }
 
     .container::before {
@@ -103,20 +92,7 @@
       text-align: center; font-size: 12px; color: var(--tree-green); font-weight: bold;
     }
 
-    .signature-area { 
-      display: block !important; 
-      margin-top: 40px; 
-      border-top: 2px solid #333; 
-      width: 250px; 
-      padding-top: 10px;
-      font-weight: bold;
-    }
-
-    input, textarea, select {
-      border: none !important;
-      background: transparent !important;
-      font-family: inherit !important;
-    }
+    input, textarea, select { border: none !important; background: transparent !important; font-family: inherit !important; }
   }
 </style>
 </head>
@@ -149,11 +125,11 @@
 
   <label>Have you been Naughty or Nice?</label>
   <div class="radio-group">
-    <label class="radio-option"><input type="radio" name="behaviour" value="Nice" checked> Nice 😇</label>
-    <label class="radio-option"><input type="radio" name="behaviour" value="A little Naughty"> A little bit naughty 🤭</label>
-    <label class="radio-option"><input type="radio" name="behaviour" value="It wasn't my fault"> Naughty, but it wasn't my fault 😟</label>
+    <label class="radio-option"><input type="radio" name="behaviour" value="Nice 😇" checked> Nice 😇</label>
+    <label class="radio-option"><input type="radio" name="behaviour" value="A little bit naughty 🤭"> A little bit naughty 🤭</label>
+    <label class="radio-option"><input type="radio" name="behaviour" value="Naughty, but it wasn't my fault 😟"> Naughty, but it wasn't my fault 😟</label>
   </div>
-  
+
   <div id="print-behavior-text">This year, I have been: <span id="status-val">Nice 😇</span></div>
 
   <div class="wishlist-section">
@@ -194,10 +170,10 @@
 
   <div class="address-box privacy-notice" style="font-size:13px; margin-top: 10px; border-style: dotted; min-height: auto;">
     <strong>Privacy & Safety Notice</strong><br>
-    Adult supervision is recommended at all times.<br>
-    This page does not store any personal information.<br>
-    Emails to Santa are sent using your device’s email app.<br>
-    Home addresses should only be entered with adult permission, but are required to receive a letter from Santa.
+    This page does not store personal data.<br>
+    Emails are sent using the device’s email app.<br>
+    Home addresses should only be entered with adult permission.<br>
+    Adult supervision is recommended at all times.
   </div>
 
   <button type="button" class="main-btn send-btn" onclick="validateAndProcess('email')">Send email to Santa's helpers 📤</button>
@@ -242,9 +218,9 @@
     }
 
     if (action === 'print') {
-      // Update the hidden print text with the current selection
-      const behavior = document.querySelector('input[name="behaviour"]:checked').value;
-      document.getElementById('status-val').innerText = (behavior === 'Nice') ? 'Nice 😇' : 'Naughty 😈';
+      // Set the behavior text for the printer
+      const behaviorSelection = document.querySelector('input[name="behaviour"]:checked').value;
+      document.getElementById('status-val').innerText = behaviorSelection;
 
       const inputs = document.querySelectorAll('input, textarea');
       const savedPlaceholders = Array.from(inputs).map(i => i.placeholder);
