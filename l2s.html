@@ -13,14 +13,36 @@
     --tree-green: #2a9d8f;
     --gold: #e9c46a;
     --paper: #fefae0;
+    --sky-blue: #a8dadc;
+    --bg-img: url("https://images.unsplash.com/photo-1543589077-47d81606c1bf");
+  }
+
+  /* Theme Overrides */
+  body.theme-snow { 
+    --bg-img: url("https://images.unsplash.com/photo-1418985991508-e47386d96a71"); 
+    --accent: #457b9d; 
+  }
+  body.theme-reindeer { 
+    --bg-img: url("https://images.unsplash.com/photo-1512435133373-89025e656121"); 
+    --accent: #8b5a2b; 
+  }
+  body.theme-gingerbread { 
+    --bg-img: url("https://images.unsplash.com/photo-1575549594213-958f0012f5ba"); 
+    --accent: #d4a373; 
+    --paper: #faedcd;
+  }
+  body.theme-santa { 
+    --bg-img: url("https://images.unsplash.com/photo-1543589077-47d81606c1bf"); 
+    --accent: #c1121f; 
   }
 
   body {
     font-family: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
-    background: #a8dadc url("https://images.unsplash.com/photo-1543589077-47d81606c1bf") no-repeat center center fixed;
+    background: var(--sky-blue) var(--bg-img) no-repeat center center fixed;
     background-size: cover;
     margin: 0;
     padding: 20px;
+    transition: background 0.5s ease;
   }
 
   .container {
@@ -33,12 +55,32 @@
     border: 8px solid white;
   }
 
-  h1 { text-align: center; color: var(--santa-red); font-size: 28px; margin-bottom: 20px; }
+  /* Theme Picker Styling */
+  .theme-picker {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .theme-btn {
+    border: 2px solid #ddd;
+    background: white;
+    padding: 8px 12px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+  }
+  .theme-btn:hover { transform: translateY(-2px); border-color: var(--gold); }
+  .theme-btn.active { background: var(--gold); border-color: #333; }
+
+  h1 { text-align: center; color: var(--santa-red); font-size: 28px; margin-top: 0; }
   
   .row { display: flex; gap: 15px; margin-bottom: 15px; }
   .col { flex: 1; }
 
-  label { display: block; margin-top: 10px; font-weight: bold; color: #333; font-size: 14px; }
+  label { display: block; margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
 
   input, textarea, select {
     width: 100%;
@@ -50,6 +92,12 @@
     box-sizing: border-box;
   }
 
+  .radio-group { 
+    background: #fdfdfd; padding: 12px; border-radius: 10px; border: 2px solid #eee; 
+    margin-top: 8px; display: flex; gap: 20px; 
+  }
+  .radio-option { display: flex; align-items: center; cursor: pointer; gap: 8px; }
+
   .wishlist-section {
     margin: 25px 0;
     background: #f1f8f7;
@@ -58,27 +106,15 @@
     border: 2px dashed var(--tree-green);
   }
 
-  table { width: 100%; border-collapse: collapse; }
-  th { text-align: left; font-size: 13px; color: #555; }
-
   .btn-add {
-    background: var(--gold);
-    color: #333;
-    padding: 8px 15px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    margin-top: 10px;
+    background: var(--gold); color: #333; padding: 8px 15px;
+    border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin-top: 10px;
   }
 
   .btn-remove { background: #e63946; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; }
 
-  .radio-group { background: white; padding: 10px; border-radius: 10px; border: 1px solid #ddd; margin-top: 5px; display: flex; gap: 15px; }
-
   .main-btn { margin-top: 15px; width: 100%; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 12px; border: none; cursor: pointer; transition: 0.2s; }
   .send-btn { background: var(--tree-green); color: white; }
-  .send-btn:hover { background: #1e7a6e; }
   .print-btn { background: #457b9d; color: white; }
 
   .address-box {
@@ -92,166 +128,30 @@
   }
 
   .stamp {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 60px;
-    height: 60px;
-    border: 3px double #c1121f;
-    color: #c1121f;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: bold;
-    text-align: center;
-    transform: rotate(15deg);
-    border-radius: 5px;
+    position: absolute; top: 10px; right: 10px; width: 60px; height: 60px;
+    border: 3px double var(--santa-red); color: var(--santa-red);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: bold; transform: rotate(15deg); border-radius: 5px;
   }
 
   @media print {
-    button, .btn-add, .btn-remove, .notice, .radio-group { display: none !important; }
+    .theme-picker, button, .btn-add, .btn-remove, .radio-group { display: none !important; }
     body { background: white; padding: 0; }
     .container { box-shadow: none; border: none; max-width: 100%; }
-    input, textarea { border: none; background: transparent; }
   }
 </style>
 </head>
 
-<body>
+<body class="theme-santa">
 
 <div class="container">
-  <h1>✉️ Write to Santa Claus 🎄</h1>
-
-  <div class="row">
-    <div class="col">
-      <label>Your Name</label>
-      <input type="text" id="name" placeholder="e.g. Emily">
-    </div>
-    <div class="col" style="flex: 0.4;">
-      <label>Your Age</label>
-      <input type="number" id="age" placeholder="7">
-    </div>
+  <div class="theme-picker">
+    <button class="theme-btn active" onclick="setTheme('santa', this)">🎅 Santa Red</button>
+    <button class="theme-btn" onclick="setTheme('snow', this)">❄️ Snowy Night</button>
+    <button class="theme-btn" onclick="setTheme('reindeer', this)">🦌 Reindeer</button>
+    <button class="theme-btn" onclick="setTheme('gingerbread', this)">🍪 Gingerbread</button>
   </div>
 
-  <label>Have you been Naughty or Nice?</label>
-  <div class="radio-group">
-    <label style="font-weight: normal;"><input type="radio" name="behaviour" value="Nice" checked> Nice 😇</label>
-    <label style="font-weight: normal;"><input type="radio" name="behaviour" value="A little Naughty"> A little Naughty 😈</label>
-  </div>
+  <h1>✉️ My Letter to Santa 🎄</h1>
 
-  <div class="wishlist-section">
-    <strong>🎁 My Christmas Wishlist</strong>
-    <table id="wishlistTable">
-      <thead>
-        <tr>
-          <th style="width: 65%;">Toy or Gift</th>
-          <th style="width: 30%;">How much I want it</th>
-          <th style="width: 5%;"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="text" class="toy-name" placeholder="e.g. A blue bike"></td>
-          <td>
-            <select class="toy-priority">
-              <option value="Must Have!">Must Have! ⭐</option>
-              <option value="Pretty Please">Pretty Please 🙏</option>
-              <option value="Maybe?">Maybe? 😊</option>
-            </select>
-          </td>
-          <td></td>
-        </tr>
-      </tbody>
-    </table>
-    <button type="button" class="btn-add" onclick="addRow()">+ Add Another Toy</button>
-  </div>
-
-  <label>A Message for Santa</label>
-  <textarea id="message" style="min-height: 80px;" placeholder="Dear Santa..."></textarea>
-
-  <label>Where should Santa reply to?</label>
-  <textarea id="address" style="min-height: 50px;" placeholder="Enter your home address here"></textarea>
-
-  <div class="address-box">
-    <div class="stamp">NORTH POLE<br>OFFICIAL</div>
-    <strong>Deliver to:</strong><br>
-    <span id="printAddressText">Waiting for your address...</span>
-  </div>
-
-  <button class="main-btn send-btn" id="sendBtn" onclick="sendLetter()">Send to the North Pole 🚀</button>
-  <button class="main-btn print-btn" onclick="window.print()">Print My Letter 🖨️</button>
-</div>
-
-<script>
-  (function() { emailjs.init("YOUR_PUBLIC_KEY"); })();
-
-  function addRow() {
-    const table = document.getElementById("wishlistTable").getElementsByTagName('tbody')[0];
-    const newRow = table.insertRow();
-    newRow.innerHTML = `
-      <td><input type="text" class="toy-name" placeholder="Enter toy name"></td>
-      <td>
-        <select class="toy-priority">
-          <option value="Must Have!">Must Have! ⭐</option>
-          <option value="Pretty Please">Pretty Please 🙏</option>
-          <option value="Maybe?">Maybe? 😊</option>
-        </select>
-      </td>
-      <td><button class="btn-remove" onclick="this.parentElement.parentElement.remove()">✕</button></td>
-    `;
-  }
-
-  document.getElementById("address").addEventListener("input", function() {
-    document.getElementById("printAddressText").innerText = this.value || "Waiting for your address...";
-  });
-
-  async function sendLetter() {
-    const btn = document.getElementById("sendBtn");
-    const name = document.getElementById("name").value.trim();
-    const age = document.getElementById("age").value.trim();
-    const message = document.getElementById("message").value.trim();
-    
-    // Compile Wishlist
-    let wishlistArray = [];
-    const toys = document.querySelectorAll('.toy-name');
-    const priorities = document.querySelectorAll('.toy-priority');
-    toys.forEach((toy, index) => {
-      if(toy.value.trim() !== "") {
-        wishlistArray.push(`${toy.value.trim()} [Priority: ${priorities[index].value}]`);
-      }
-    });
-
-    const fullLetter = `${message}\n\nWISHLIST:\n${wishlistArray.join("\n")}`;
-
-    if (!name || !message) {
-      alert("Please enter your name and write a message!");
-      return;
-    }
-
-    btn.disabled = true;
-    btn.innerText = "Sending... ❄️";
-
-    const templateParams = {
-      child_name: name,
-      child_age: age || "Not specified",
-      naughty_nice: document.querySelector('input[name="behaviour"]:checked').value,
-      letter_message: fullLetter,
-      reply_address: document.getElementById("address").value || "No address provided"
-    };
-
-    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", templateParams)
-      .then(() => {
-        alert("✨ Ho Ho Ho! Your letter has been sent!");
-        btn.innerText = "Letter Sent! ✅";
-      })
-      .catch((err) => {
-        alert("Oops! The mail sleigh is stuck. Try again later.");
-        btn.disabled = false;
-        btn.innerText = "Send to the North Pole 🚀";
-      });
-  }
-</script>
-
-</body>
-</html>
+  <div class="row
