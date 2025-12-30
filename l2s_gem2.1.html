@@ -62,7 +62,7 @@
   .col { flex: 1; }
 
   label { display: block; margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
-  input, textarea, select { width: 100%; padding: 12px; font-size: 16px; margin-top: 5px; border-radius: 10px; border: 2px solid #eee; box-sizing: border-box; }
+  input, textarea, select { width: 100%; padding: 12px; font-size: 16px; margin-top: 5px; border-radius: 10px; border: 2px dashed var(--tree-green); box-sizing: border-box; }
 
   /* --- Fixed Radio Group Formatting --- */
   .radio-group { 
@@ -202,7 +202,7 @@
     X Signature of the Sender
   </div>
 
-  <div class="address-box privacy-notice" style="font-size:13px; margin-top: 10px; border-style: dotted; min-height: auto;">
+  <div class="address-box privacy-notice" style="font-size:13px; margin-top: 10px; border: 2px dashed var(--tree-green); min-height: auto;">
     <strong>Privacy & Safety Notice</strong><br>
     This page does not store personal data.<br>
     Emails are sent using the device’s email app.<br>
