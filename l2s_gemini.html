@@ -16,23 +16,27 @@
 
   /* Themes - Swapping Background Images */
   body.theme-santa { 
-    background-image: url("https://images.unsplash.com/photo-1543589077-47d81606c1bf"); 
+    background-image: url("santa.jpg"); 
     --accent: #c1121f; 
   }
   body.theme-snow { 
-    background-image: url("https://images.unsplash.com/photo-1418985991508-e47386d96a71"); 
+    background-image: url("snow.jpg"); 
     --accent: #457b9d; 
   }
   body.theme-reindeer { 
-    background-image: url("https://images.unsplash.com/photo-1512435133373-89025e656121"); 
+    background-image: url("reindeer.webp"); 
     --accent: #8b5a2b; 
   }
   body.theme-gingerbread { 
-    background-image: url("https://images.unsplash.com/photo-1575549594213-958f0012f5ba"); 
+    background-image: url("ginger.jpg"); 
     --accent: #d4a373; 
     --paper: #faedcd;
   }
-
+   body.theme-presents { 
+    background-image: url("presents.jpg"); 
+    --accent: #c1121f; 
+  }
+  
   body {
     font-family: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
     background-size: cover;
@@ -129,7 +133,8 @@
     <button class="theme-btn active" onclick="setTheme('santa', this)">🎅 Santa</button>
     <button class="theme-btn" onclick="setTheme('snow', this)">❄️ Snow</button>
     <button class="theme-btn" onclick="setTheme('reindeer', this)">🦌 Reindeer</button>
-    <button class="theme-btn" onclick="setTheme('gingerbread', this)">🍪 Cookie</button>
+    <button class="theme-btn" onclick="setTheme('gingerbread', this)">🍪 Gingerbread</button>
+    <button class="theme-btn" onclick="setTheme('presents', this)">🎁 Presents</button>
   </div>
 
   <h1>✉️ My Letter to Santa 🎄</h1>
