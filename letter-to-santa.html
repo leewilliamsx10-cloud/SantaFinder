@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Letter to Santa 🎅</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+  body {
+    font-family: "Comic Sans MS", Arial, sans-serif;
+    background: url("https://images.unsplash.com/photo-1543589077-47d81606c1bf") no-repeat center center fixed;
+    background-size: cover;
+    padding: 20px;
+  }
+
+  .container {
+    background: rgba(255, 255, 255, 0.95);
+    max-width: 600px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  }
+
+  h1 {
+    text-align: center;
+    color: #c1121f;
+  }
+
+  label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+
+  input, textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 5px;
+  }
+
+  textarea {
+    min-height: 150px;
+  }
+
+  .radio-group {
+    margin-top: 10px;
+  }
+
+  button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    background: #2a9d8f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #21867a;
+  }
+
+  .print-btn {
+    background: #457b9d;
+  }
+
+  .notice {
+    font-size: 13px;
+    color: #333;
+    margin-top: 20px;
+    background: #fefae0;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>✉️ Write a Letter to Santa 🎄</h1>
+
+  <label>Your Name</label>
+  <input type="text" id="name" placeholder="e.g. Jack">
+
+  <label>Your Age</label>
+  <input type="number" id="age" placeholder="e.g. 6">
+
+  <label>Have you been Naughty or Nice?</label>
+  <div class="radio-group">
+    <input type="radio" name="behaviour" value="Nice 🎁" checked> Nice  
+    <input type="radio" name="behaviour" value="A little bit Naughty 😇"> A little bit Naughty
+  </div>
+
+  <label>Your Letter</label>
+  <textarea id="message" placeholder="Dear Santa..."></textarea>
+
+  <button onclick="sendLetter()">Send to Santa 🎅</button>
+  <button class="print-btn" onclick="printLetter()">Print My Letter 🖨️</button>
+
+  <div class="notice">
+    <strong>Grown-up Notice:</strong><br>
+    This page does not store any information.<br>
+    Emails are sent securely to Santa’s helpers.<br>
+    Adult supervision is recommended.
+  </div>
+</div>
+
+<script>
+  (function(){
+    emailjs.init("YOUR_PUBLIC_KEY");
+  })();
+
+  function sendLetter() {
+    const name = document.getElementById("name").value.trim();
+    const age = document.getElementById("age").value.trim();
+    const message = document.getElementById("message").value.trim();
+    const behaviour = document.querySelector('input[name="behaviour"]:checked').value;
+
+    if (!name || !message) {
+      alert("Please add your name and letter first!");
+      return;
+    }
+
+    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+      child_name: name,
+      child_age: age,
+      naughty_nice: behaviour,
+      letter_message: message
+    })
+    .then(() => {
+      alert("🎄 Your letter has been sent to Santa!");
+    })
+    .catch(() => {
+      alert("Oops! Santa's mailbag is full. Try again later.");
+    });
+  }
+
+  function printLetter() {
+    window.print();
+  }
+</script>
+
+</body>
+</html>
