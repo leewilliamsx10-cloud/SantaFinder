@@ -118,6 +118,39 @@
     font-size: 10px; font-weight: bold; transform: rotate(15deg); border-radius: 5px; text-align: center;
   }
 
+  function validateAndProcess(action) {
+  // 1. Collect values
+  const name = document.getElementById("name").value.trim();
+  const age = document.getElementById("age").value.trim();
+  const address = document.getElementById("address").value.trim();
+  const message = document.getElementById("message").value.trim();
+
+  // 2. The Validation Check
+  if (!name || !age || !address) {
+    alert("🎅 Ho Ho Ho! Santa needs your Name, Age, and Address to find you! Please fill those in first.");
+    
+    // Optional: Highlight missing fields in red
+    if (!name) document.getElementById("name").style.borderColor = "red";
+    if (!age) document.getElementById("age").style.borderColor = "red";
+    if (!address) document.getElementById("address").style.borderColor = "red";
+    
+    return; // Stop the function here
+  }
+
+  // 3. Reset colors if they were fixed
+  document.getElementById("name").style.borderColor = "#eee";
+  document.getElementById("age").style.borderColor = "#eee";
+  document.getElementById("address").style.borderColor = "#eee";
+
+  // 4. Proceed based on button clicked
+  if (action === 'print') {
+    window.print();
+  } else {
+    // Call your existing email function here
+    sendViaEmail(name, age, address, message);
+  }
+}
+  
   @media print {
     .theme-picker, button, .btn-add, .btn-remove, .radio-group { display: none !important; }
     body { background: white !important; padding: 0; }
@@ -188,8 +221,8 @@
     <span id="printAddressText">Waiting for your address...</span>
   </div>
 
-  <button class="main-btn send-btn" onclick="sendViaEmail()">Send email to Santa's helpers 📤</button>
-  <button class="main-btn print-btn" onclick="window.print()">Print my letter to send to Santa 📮</button>
+  <button class="main-btn send-btn" onclick="validateAndProcess('email')">Send email to Santa's helpers 📤</button>
+  <button class="main-btn print-btn" onclick="validateAndProcess('print')">Print my letter to send to Santa 📮</button>
 </div>
 
 <script>
