@@ -193,14 +193,34 @@
 </div>
 
 <script>
+  
   function setTheme(theme, btn) {
-    document.body.className = 'theme-' + theme;
-    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('stampLabel').innerHTML = theme === 'gingerbread' ? "BAKED AT<br>NORTH POLE" : "NORTH POLE<br>OFFICIAL";
-    document.getElementById('stampLabel').innerHTML = theme === 'reindeer' ? "REINDEER<br>MAIL" : "NORTH POLE<br>OFFICIAL";
+  document.body.className = 'theme-' + theme;
+  
+  // Update Active Button UI
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  // Update Stamp Text based on theme
+  const stampLabel = document.getElementById('stampLabel');
+  switch(theme) {
+    case 'snow':
+      stampLabel.innerHTML = "NORTH POLE<br>ICE MAIL";
+      break;
+    case 'reindeer':
+      stampLabel.innerHTML = "FLYING EXPRESS<br>MAIL";
+      break;
+    case 'gingerbread':
+      stampLabel.innerHTML = "BAKED AT<br>NORTH POLE";
+      break;
+    case 'present':
+      stampLabel.innerHTML = "PARCEL POST<br>NORTH POLE";
+      break;  
+    default:
+      stampLabel.innerHTML = "NORTH POLE<br>OFFICIAL";
   }
-
+}
+  
   function addRow() {
     const table = document.getElementById("wishlistTable").getElementsByTagName('tbody')[0];
     const newRow = table.insertRow();
