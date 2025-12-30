@@ -154,4 +154,138 @@
 
   <h1>✉️ My Letter to Santa 🎄</h1>
 
-  <div class="row
+  <div class="row">
+    <div class="col">
+      <label>Your Name</label>
+      <input type="text" id="name" placeholder="e.g. Alex">
+    </div>
+    <div class="col" style="flex: 0.4;">
+      <label>Your Age</label>
+      <input type="number" id="age" placeholder="7">
+    </div>
+  </div>
+
+  <label>Have you been Naughty or Nice?</label>
+  <div class="radio-group">
+    <label class="radio-option"><input type="radio" name="behaviour" value="Nice" checked> Nice 😇</label>
+    <label class="radio-option"><input type="radio" name="behaviour" value="A little Naughty"> A little Naughty 😈</label>
+  </div>
+
+  <div class="wishlist-section">
+    <strong>🎁 My Christmas Wishlist</strong>
+    <table id="wishlistTable">
+      <thead>
+        <tr>
+          <th style="width: 65%;">Toy or Gift</th>
+          <th style="width: 30%;">Priority</th>
+          <th style="width: 5%;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text" class="toy-name" placeholder="e.g. A blue bike"></td>
+          <td>
+            <select class="toy-priority">
+              <option value="Must Have!">Must Have! ⭐</option>
+              <option value="Pretty Please">Pretty Please 🙏</option>
+              <option value="Maybe?">Maybe? 😊</option>
+            </select>
+          </td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="button" class="btn-add" onclick="addRow()">+ Add Another Toy</button>
+  </div>
+
+  <label>A Message for Santa</label>
+  <textarea id="message" style="min-height: 80px;" placeholder="Dear Santa..."></textarea>
+
+  <label>Where should Santa reply to?</label>
+  <textarea id="address" style="min-height: 50px;" placeholder="Enter your home address here"></textarea>
+
+  <div class="address-box">
+    <div class="stamp" id="stampText">NORTH POLE<br>OFFICIAL</div>
+    <strong>Deliver to:</strong><br>
+    <span id="printAddressText">Waiting for your address...</span>
+  </div>
+
+  <button class="main-btn send-btn" id="sendBtn" onclick="sendLetter()">Send to the North Pole 🚀</button>
+  <button class="main-btn print-btn" onclick="window.print()">Print My Letter 🖨️</button>
+</div>
+
+<script>
+  (function() { emailjs.init("YOUR_PUBLIC_KEY"); })();
+
+  function setTheme(themeName, btn) {
+    document.body.className = 'theme-' + themeName;
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Change stamp text for Gingerbread theme for fun
+    const stamp = document.getElementById('stampText');
+    stamp.innerHTML = themeName === 'gingerbread' ? "BAKED AT<br>NORTH POLE" : "NORTH POLE<br>OFFICIAL";
+  }
+
+  function addRow() {
+    const table = document.getElementById("wishlistTable").getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+    newRow.innerHTML = `
+      <td><input type="text" class="toy-name" placeholder="Enter toy name"></td>
+      <td>
+        <select class="toy-priority">
+          <option value="Must Have!">Must Have! ⭐</option>
+          <option value="Pretty Please">Pretty Please 🙏</option>
+          <option value="Maybe?">Maybe? 😊</option>
+        </select>
+      </td>
+      <td><button class="btn-remove" onclick="this.parentElement.parentElement.remove()">✕</button></td>
+    `;
+  }
+
+  document.getElementById("address").addEventListener("input", function() {
+    document.getElementById("printAddressText").innerText = this.value || "Waiting for your address...";
+  });
+
+  async function sendLetter() {
+    const btn = document.getElementById("sendBtn");
+    const name = document.getElementById("name").value.trim();
+    const age = document.getElementById("age").value.trim();
+    const message = document.getElementById("message").value.trim();
+    
+    let wishlistArray = [];
+    document.querySelectorAll('.toy-name').forEach((toy, index) => {
+      if(toy.value.trim() !== "") {
+        wishlistArray.push(`${toy.value.trim()} [${document.querySelectorAll('.toy-priority')[index].value}]`);
+      }
+    });
+
+    const fullLetter = `${message}\n\nWISHLIST:\n${wishlistArray.join("\n")}\n\nStationery Theme: ${document.body.className}`;
+
+    if (!name || !message) {
+      alert("Please enter your name and write a message!");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "Sending... ❄️";
+
+    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+      child_name: name,
+      child_age: age || "Not specified",
+      naughty_nice: document.querySelector('input[name="behaviour"]:checked').value,
+      letter_message: fullLetter,
+      reply_address: document.getElementById("address").value || "No address provided"
+    }).then(() => {
+        alert("✨ Ho Ho Ho! Your letter has been sent!");
+        btn.innerText = "Letter Sent! ✅";
+    }).catch(() => {
+        alert("Oops! The mail sleigh is stuck.");
+        btn.disabled = false;
+        btn.innerText = "Send to the North Pole 🚀";
+    });
+  }
+</script>
+
+</body>
+</html>
