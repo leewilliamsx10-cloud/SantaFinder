@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Write a Letter to Santa 🎅</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --santa-red: #c1121f;
+  --tree-green: #2a9d8f;
+  --gold: #e9c46a;
+  --paper: #fefae0;
+}
+
+/* Fixes layout box-sizing so padding doesn't break widths */
+* { box-sizing: border-box; }
+
+body {
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  background: #f1faee url("santa.jpg") center/cover fixed;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.9); /* Increased opacity for readability */
+  max-width: 650px;
+  margin: 20px auto;
+  padding: 30px;
+  border-radius: 20px;
+  border: 10px solid #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  color: var(--santa-red);
+  margin-top: 0;
+}
+
+label {
+  font-weight: bold;
+  margin-top: 15px;
+  display: block;
+  color: #333;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 3px solid #eee;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+textarea { min-height: 120px; resize: vertical; }
+
+.row { 
+  display: flex; 
+  gap: 15px; 
+  align-items: flex-end; /* Aligns button with input field */
+}
+.col { flex: 1; }
+
+.btn-add {
+  background: var(--gold);
+  border: none;
+  height: 48px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}
+
+.main-btn {
+  width: 100%;
+  padding: 15px;
+  margin-top: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.send-btn { background: var(--tree-green); }
+.print-btn { background: #457b9d; }
+
+.address-box {
+  margin-top: 20px;
+  background: var(--paper);
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px dashed #ccc;
+  min-height: 80px;
+  white-space: pre-line;
+}
+
+@media print {
+  button, select, .btn-add { display: none !important; }
+  body { background: white; padding: 0; }
+  .container { border: none; box-shadow: none; margin: 0; max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .row { flex-direction: column; gap: 0; }
+  .col { width: 100%; }
+  .btn-add { margin-top: 10px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>✉️ My Letter to Santa 🎄</h1>
+
+  <div class="row">
+    <div class="col">
+      <label>Your Name</label>
+      <input type="text" id="name" placeholder="Name">
+    </div>
+    <div class="col" style="flex:0.4;">
+      <label>Age</label>
+      <input type="number" id="age" placeholder="Age">
+    </div>
+  </div>
+
+  <label>A Message for Santa</label>
+  <textarea id="message" placeholder="Dear Santa..."></textarea>
+
+  <hr style="margin: 25px 0; border: 0; border-top: 1px solid #eee;">
+
+  <label>Where should Santa reply to?</label>
+  
+  <div class="row">
+    <div class="col">
+      <label style="font-size: 0.8em; color: #666;">Postcode</label>
+      <input type="text" id="postcode" placeholder="e.g. DL5 5AG">
+    </div>
+    <div class="col" style="flex:0.5;">
+      <button type="button" class="btn-add" onclick="lookupPostcode()">Find address</button>
+    </div>
+  </div>
+
+  <div id="addressSelectWrap" style="display:none; margin-top: 15px;">
+    <label>Select your address</label>
+    <select id="addressSelect" onchange="selectAddress()">
+      <option value="">-- Select an address --</option>
+    </select>
+  </div>
+
+  <input type="hidden" id="address">
+
+  <div class="address-box">
+    <strong>Deliver to:</strong><br>
+    <span id="printAddressText">Waiting for your address...</span>
+  </div>
+
+  <button type="button" class="main-btn send-btn" onclick="validateAndProcess('email')">
+    Send email to Santa's helpers 📤
+  </button>
+
+  <button type="button" class="main-btn print-btn" onclick="validateAndProcess('print')">
+    Print my letter to send to Santa 📮
+  </button>
+
+</div>
+
+<script>
+const GEOAPIFY_KEY = "bf22bbe6db284202b0a9ba09cd07b7f2";
+let addressResults = [];
+
+function lookupPostcode() {
+  const postcode = document.getElementById("postcode").value.trim();
+  if (!postcode) {
+    alert("🎅 Please enter a postcode");
+    return;
+  }
+
+  // search limited to UK (country=gb) for better accuracy
+  fetch(`https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(postcode)}&country=gb&limit=25&apiKey=${GEOAPIFY_KEY}`)
+  .then(res => res.json())
+  .then(data => {
+    if (!data.features || data.features.length === 0) {
+      alert("❄️ Santa couldn't find that postcode. Please check it!");
+      return;
+    }
+
+    // Store results and populate select menu
+    addressResults = data.features;
+    const select = document.getElementById("addressSelect");
+    select.innerHTML = '<option value="">-- Select an address --</option>';
+
+    addressResults.forEach((item, i) => {
+      const p = item.properties;
+      const option = document.createElement("option");
+      option.value = i;
+      
+      // If house number is missing from database, show street and a hint
+      const displayLabel = p.housenumber ? `${p.housenumber} ${p.street}` : `${p.street} (House number missing)`;
+      option.textContent = displayLabel;
+      select.appendChild(option);
+    });
+
+    document.getElementById("addressSelectWrap").style.display = "block";
+  })
+  .catch(() => alert("🎄 Santa’s address finder is busy. Please try again."));
+}
+
+function selectAddress() {
+  const index = document.getElementById("addressSelect").value;
+  if (index === "") return;
+
+  const p = addressResults[index].properties;
+  
+  let house = p.housenumber || "";
+  
+  // If the database didn't have the house number, ask the user
+  if (!house) {
+    house = prompt("🎅 Santa found your street! What is your house number or name?", "");
+    if (!house) return; // User cancelled
+  }
+
+  const fullAddress = `${house} ${p.street}\n${p.city || p.town || ""}\n${p.postcode.toUpperCase()}`;
+
+  document.getElementById("address").value = fullAddress;
+  document.getElementById("printAddressText").innerText = fullAddress;
+}
+
+function validateAndProcess(action) {
+  const name = document.getElementById("name").value.trim();
+  const age = document.getElementById("age").value.trim();
+  const address = document.getElementById("address").value.trim();
+  const message = document.getElementById("message").value.trim();
+
+  if (!name || !age || !address) {
+    alert("🎅 Santa needs your Name, Age, and Address!");
+    return;
+  }
+
+  if (action === "print") {
+    window.print();
+  } else {
+    sendViaEmail(name, age, address, message);
+  }
+}
+
+function sendViaEmail(name, age, address, message) {
+  const subject = `Christmas Letter from ${name}`;
+  const body = `Dear Santa,
+
+My name is ${name} and I am ${age} years old.
+
+${message}
+
+Please reply to:
+${address}
+
+Love,
+${name}`;
+
+  window.location.href = "mailto:lee.williams@great-aycliffe.gov.uk" +
+    "?subject=" + encodeURIComponent(subject) +
+    "&body=" + encodeURIComponent(body);
+}
+</script>
+
+</body>
+</html>
