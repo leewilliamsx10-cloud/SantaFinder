@@ -122,15 +122,18 @@ a[target="_weblink"]:hover { color: red; }
     
     <!-- Button Container -->
     <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-      <button onclick="handleAgreement()">I UNDERSTAND</button>
-      <button onclick="handleDisagreement()" style="background-color: #666; color: white;">DISAGREE & LEAVE</button>
+      <button onclick="handleAgreement()" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        I UNDERSTAND
+      </button>
+      <button onclick="handleDisagreement()" style="background-color: #b30000; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        DISAGREE & LEAVE
+      </button>
     </div>
   </div>
 </div>
 
 <script>
   function handleDisagreement() {
-    // Redirects the user away from the site (e.g., to Google or the main Council homepage)
     window.location.href = "https://www.great-aycliffe.gov.uk/"; 
   }
 </script>
